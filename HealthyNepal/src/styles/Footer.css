@@ -1,0 +1,35 @@
+
+.Footer {
+border: 2px solid black;
+height: 200px;
+width: 100%;
+position: fixed;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: #333;
+padding: 20px;
+box-sizing: border-box;
+margin-left: -25px;
+}
+
+
+.footer-info,
+.footer-account,
+.footer-about {
+    text-align: center;
+    padding: 10px;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.footer-info h1,
+.footer-account h1,
+.footer-about h1 {
+    font-size: 1.0rem;
+    margin: 0 0 10px 0;
+}
+
+.footer-about p {
+    font-size: 15px;
+}

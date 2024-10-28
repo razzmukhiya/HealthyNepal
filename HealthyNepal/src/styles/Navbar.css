@@ -1,0 +1,55 @@
+.Navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333; /* optional */
+    color: #fff; /* optional */
+    padding: 1rem;
+    
+}
+
+.NavTop {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+     margin: 0 auto;
+     
+  
+}
+
+
+
+.NavDown {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.NavDown input {
+    height: 35px;
+    width: 250px;
+    border-radius: 12px;
+    background-color: #fff;
+    /* border: 2px solid black; */
+}
+
+/* .NavLink p {
+    position: relative;
+    text-decoration: none;
+    color: red;
+    
+} */
+
+hr {
+    
+        width: 50%; /* Equivalent to w-2/4 */
+        border: none; /* Equivalent to border-none */
+        height: 1.5px; /* Equivalent to h-[1.5px] */
+        background-color: #4B5563; /* Equivalent to bg-gray-700 */
+}
+
+/* .NavLink.active::after {
+    transform: scaleX(1);
+} */
