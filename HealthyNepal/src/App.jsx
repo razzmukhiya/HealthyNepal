@@ -17,6 +17,7 @@ import SignupVendor from './pages/vendorsignup'
 import PrescriptionMedicine from './pages/prescriptionmedicine'
 // import UserDashboard from './pages/UserDashboard/UserDashboard'
 import Hero from './components/Hero'
+import ActivationPage from './pages/ActivationPage'
 
 function App() {
   const Locations = useLocation();
@@ -37,6 +38,7 @@ function App() {
       <Route path='/place-order' element={<PlaceOrder />} />
       <Route path='/signup-vendor' element={<SignupVendor />} />
       <Route path='/prescription-medicine' element={<PrescriptionMedicine />} />
+      <Route path='/activation/:url' element={<ActivationPage />} />
       {/* <Route path='/userdashboard' element={<UserDashboard />} /> */}
     </Routes>
     
