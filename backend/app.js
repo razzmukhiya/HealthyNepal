@@ -6,14 +6,14 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your frontend URL
-    credentials: true // Allow cookies to be sent
+    origin: 'http://localhost:5173',
+    credentials: true, // Allow cookies to be sent
 };
 app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser())
-app.use(cors());
+// app.use(cors());
 app.use("/", express.static("uploads"));
 app.use("/test", (req, res) => {
     res.send("Hello world!");
@@ -40,6 +40,7 @@ app.use("/api/v2/user", user);
 
 // it's for ErrorHandling
 const errorHandlerInstance = new ErrorHandler();
+
 
 
 

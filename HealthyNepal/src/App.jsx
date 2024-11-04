@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Routes,Route, useLocation} from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
@@ -18,8 +18,18 @@ import PrescriptionMedicine from './pages/prescriptionmedicine'
 // import UserDashboard from './pages/UserDashboard/UserDashboard'
 import Hero from './components/Hero'
 import ActivationPage from './pages/ActivationPage'
+import axios from 'axios'
+import { server } from "./../server";
+import { toast } from 'react-toastify'
 
 function App() {
+  useEffect(() => {
+    axios.get(`${server}/user/getuser`, {withCredentials:true}).then((res) => {
+      toast.success(res.data.message);
+    }).catch((err) => {
+      toast.error(err.response.data.message);
+    })
+  }, []);
   const Locations = useLocation();
   return (
     <div className='Nbar'>
