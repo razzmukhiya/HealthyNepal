@@ -1,8 +1,10 @@
 import React from 'react'
 import '../styles/premed.css'
+import Navbar from '../components/Navbar'
 
 const prescriptionmedicine = () => {
   return (
+    <> <Navbar /> 
     <div className='preMed'>
       <h2>ORDER PRESCRIPTION MEDICINE</h2>
 
@@ -16,6 +18,7 @@ const prescriptionmedicine = () => {
         <button>Buy Now</button>
       </div>
     </div>
+    </>
   )
 }
 

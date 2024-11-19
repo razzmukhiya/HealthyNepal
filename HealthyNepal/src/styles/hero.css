@@ -1,37 +1,46 @@
-.Latest-arrivals {
-    border: 1px solid black;
-    /* background-color: #fff; */
+.hero-container{
+    /* position: relative; */
+    min-height: 100vh;
     width: 100%;
-    top: 0;
-    padding: 20px;
-    text-align: center;
-}
-
-.title {
+    background-image: url(https://www.msm.edu/online/makingmedicines/images/makingmedicines784.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.line {
-    width: 50px;
-    height: 2px;
-    background-color: #ccc;
-    margin-right: 10px;
+.hero-content {
+    width: 90%;
+    max-width: 60%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
 }
 
-h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
+.hero-title {
+display: inline-block;
+color: #fff;
 }
 
-.shop-now {
-    background-color: #000;
-    color: #fff;
+.shop-button {
+    margin-top: 5px;
+    background-color: #3d3a3a;
     padding: 10px 20px;
-    border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.shop-button:hover {
+    background-color: #5a5858;
+}
+
+.shop-text {
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    
 }

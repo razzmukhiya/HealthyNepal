@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import "../styles/signup.css";
+import "../../styles/signup.css";
 import { set } from "mongoose";
-import {server} from "../../server.js";
+import {server} from "../../../server.js";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Navbar from "../../components/Navbar.jsx";
+
 // import { copyFile } from "fs";
 
 const Signup = () => {
@@ -68,6 +70,8 @@ const Signup = () => {
   // }
 
   return (
+    <>
+    <Navbar />
     <div className="SignUp">
       <h2>CREATE A NEW ACCOUNT</h2>
 
@@ -138,6 +142,7 @@ const Signup = () => {
         <button type="submit">Sign Up</button>
       </form>
     </div>
+    </>
   );
 };
 

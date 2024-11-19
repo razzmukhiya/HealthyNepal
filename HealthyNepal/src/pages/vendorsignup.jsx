@@ -1,8 +1,11 @@
 import React from 'react'
 import '../styles/vendorsignup.css'
+import Navbar from '../components/Navbar'
 
 const vendorsignup = () => {
   return (
+      <>
+      <Navbar />
     <div className='vendor-signup-container'>
       <h2>CREATE A NEW ACCOUNT</h2>
 
@@ -19,6 +22,7 @@ const vendorsignup = () => {
     </form>
 
     </div>
+    </>
   )
 }
 

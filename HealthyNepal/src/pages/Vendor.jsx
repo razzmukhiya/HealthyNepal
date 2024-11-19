@@ -1,10 +1,13 @@
 import React from 'react'
 import Navbar from '../components/Navbar';
 import { NavLink } from 'react-router-dom';
-import '../styles/vendor.css'
+import '../styles/vendor.css';
+
 
 const Vendor = () => {
   return (
+    <>
+    <Navbar />
     <div className='VendorLogin'>
     
       <div className="VenA">
@@ -30,6 +33,7 @@ const Vendor = () => {
         </form>
       </div>
     </div>
+    </>
   )
 }
 
