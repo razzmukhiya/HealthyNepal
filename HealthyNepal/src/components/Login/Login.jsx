@@ -28,7 +28,7 @@ import Navbar from '../Navbar';
           )
           .then((res) => {
             toast.success("Login Success!");
-            navigate("/");
+            navigate("/dashboard");
             window.location.reload(true);
           })
           .catch((err) => {

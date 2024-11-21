@@ -1,0 +1,48 @@
+.sidebar {
+    background-color: #FF6B00;
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.sidebar-header p {
+    font-size: 14px;
+    margin: 0;
+    color: black;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.VendorNavl {
+    color: black ;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 5px;
+    /* margin-bottom: 5px; */
+    transition: background-color 0.3s ease;
+}
+
+.VendorNavl:hover {
+    background-color: #05B171;
+    border-radius: 6px;
+    height: 30px;
+}
+

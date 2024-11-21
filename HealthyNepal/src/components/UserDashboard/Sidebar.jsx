@@ -6,38 +6,38 @@ import "../../styles/Sidebar.css";
 const sidebar = () => {
   return (
     <>
-    <div className="sidebar">
-      <NavLink to="/dashboard" className="Navlink">
+    <div className="Sidebar">
+      <NavLink to="/dashboard" className="Navl">
         <p>Dashboard</p>
         <hr hidden />
       </NavLink>
 
-      <NavLink to="/orders" className="Navlink">
+      <NavLink to="/orders" className="Navl">
         <p>Orders</p>
         <hr  hidden />
       </NavLink>
 
-      <NavLink to="/address" className="Navlink">
+      <NavLink to="/address" className="Navl">
         <p>Address</p>
         <hr hidden/>
       </NavLink>
 
-      <NavLink to="/wishlist" className="Navlink">
+      <NavLink to="/wishlist" className="Navl">
         <p>WishList</p>
         <hr hidden/>
       </NavLink>
 
-      <NavLink to="/chatsupport" className="Navlink">
+      <NavLink to="/chatsupport" className="Navl">
         <p>Chat Support</p>
         <hr hidden />
       </NavLink>
 
-      <NavLink to="/profile" className="Navlink">
+      <NavLink to="/profile" className="Navl">
         <p>Profile</p>
         <hr hidden/>
       </NavLink>
 
-      <NavLink to="/logout" className="Navlink">
+      <NavLink to="/logout" className="Navl">
         <p>Logout</p>
         <hr hidden/>
       </NavLink>
