@@ -1,0 +1,49 @@
+.best-deals {
+    padding: 2rem;
+}
+
+.section {
+    margin-bottom: 2rem;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.Grids {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0.375rem;
+}
+
+.product-name {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+.product-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icon {
+    cursor: pointer;
+    margin-right: 0.5rem;
+}

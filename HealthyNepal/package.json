@@ -17,6 +17,7 @@
     "healthynepal": "file:",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
+    "react-avatar": "^5.0.3",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-lottie": "^1.2.4",

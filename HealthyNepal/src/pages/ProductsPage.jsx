@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/ProductCard/ProductCard";
 import  "../styles/ProductsPage.css";
 
 

@@ -11,11 +11,16 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 600px;
+    margin-bottom: 50px;
+    width: 500px;
+
 }
 
 .Login form {
     display: flex;
     flex-direction: column;
+    margin-top: 100px;
 }
 
 .Login input {
@@ -24,6 +29,9 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    height: 40px;
+    width: 100px;
+    
 }
 
 .Login button {

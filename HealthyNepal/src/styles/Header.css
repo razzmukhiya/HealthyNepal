@@ -1,0 +1,204 @@
+.header-section {
+    font-size: 1rem;
+  }
+  
+  .header-desktop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .search-container {
+    position: relative;
+    width: 50%;
+  }
+  
+  .search-input {
+    height: 40px;
+    width: 100%;
+    padding: 0 10px;
+    border: 2px solid #3957db;
+    border-radius: 5px /* Additional styles for the search input */
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+  
+  .search-results {
+    position: absolute;
+    min-height: 30vh;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 9;
+    padding: 10px;
+  }
+  
+  .search-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+  }
+  
+  .search-item-image {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .header-button {
+    /* Styles for the header button */
+  }
+  
+  .button-text {
+    color: #fff;
+    display: flex;
+    align-items: center;
+  }
+  
+  .button-icon {
+    margin-left: 5px;
+  }
+  
+  .header-navbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #3321c8;
+    height: 70px;
+    transition: box-shadow 0.3s;
+  }
+  
+  .header-navbar.active {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .categories-dropdown {
+    position: relative;
+    height: 60px;
+    margin-top: 10px;
+    width: 270px;
+  }
+  
+  .menu-icon {
+    position: absolute;
+    top: 15px;
+    left: 10px;
+  }
+  
+  .categories-button {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 40px;
+    background-color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .dropdown-icon {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    cursor: pointer;
+  }
+  
+  .navbar-items {
+    /* Styles for navbar items */
+  }
+  
+  .navbar-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon {
+    color: rgba(255, 255, 255, 0.83);
+  }
+  
+  .badge {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 50%;
+    background-color: #3bc177;
+    width: 16px;
+    height: 16px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profile-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+  
+  .mobile-header {
+    display: none;
+  }
+  
+  .mobile-header.active {
+    display: flex;
+  }
+  
+  .mobile-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    background-color: #fff;
+    z-index: 50;
+  }
+  
+  .sidebar {
+    position: fixed;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  
+  .sidebar-content {
+    position: fixed;
+    width: 70%;
+    background-color: #fff;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow-y: scroll;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+  }
+  
+  .close-icon {
+    cursor: pointer;
+  }
+  
+  .auth-link {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.73);
+    padding-right: 10px;
+  }

@@ -224,140 +224,100 @@ export const navItems = [
       image_Url:
         "https://www.britishjournalofnursing.com/media/qhnmv5cf/family.jpg?width=1002&height=564&bgcolor=White&v=1d9947ea5770090",
     },
-    // {
-    //   id: 6,
-    //   title: "New Products",
-    //   subTitle: "",
-    //   image_Url:
-    //     "https://securecdn.pymnts.com/wp-content/uploads/2014/11/Gifts-Photo-700x489.jpg",
-    // },
+    {
+      id: 6,
+      title: "New Products",
+      subTitle: "",
+      image_Url:
+        "https://t4.ftcdn.net/jpg/02/74/56/05/360_F_274560559_4bZsIKAZ5uXnn7SFiVDjxWlZflSFO3rJ.jpg",
+    },
 
   ];
   
   // product Data
-  export const productData = [
-    {
-      id: 1,
-      category:"Baby Care",
-      name: "Sanosan Baby Care Cream 100ml",
-      description:
-        "Nourish your baby's delicate skin from head to toe with our rich, natural milk protein-infused cream. Formulated with moisturizers of natural origin, skin-friendly allantoin, and nourishing shea butter, it provides 24-hour hydration for healthy, soft skin right from the start.",
-      image_Url: [
-        {
-          public_id: "test",
-          url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
-        },
-        {
-          public_id: "test",
-          url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
-        },
-      ],
-      shop: {
-        name: "Apple Pharmacy.",
-        shop_avatar: {
-          public_id: "test",
-          url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
-        },
-        ratings: 4.2,
-      },
-      price: 1099,
-      discount_price: 1049,
-      rating: 4,
-      total_sell: 35,
-      stock: 10,
-    },
-    {
-      id: 2,
-      category:"Women's Care",
-      name: "Sirona Natural pH balanced Intimate Wash 100ml",
-      description:
-        "Sirona’s Refreshing Intimate Wash is formulated with ingredients keeping in mind the extra sensitive skin of the intimate areas. While cleansing, it also helps maintain vaginal pH, which is of utmost importance to feel fresh and prevent infections, odour, irritation, itching.",
-      image_Url: [
-        {
-          public_id: "test",
-          url: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg",
-        },
-        {
-          public_id: "test",
-          url: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg",
-        },
-      ],
-      shop: {
-        name: "Amazon Pharmacy",
-        shop_avatar: {
-          public_id: "test",
-          url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
-        },
-        ratings: 4.2,
-      },
-      discount_price: 1099,
-      rating: 5,
-      total_sell: 80,
-      stock: 10,
-    //   category:"Women's Care"
-    },
-    {
-      id: 1,
-      category:"Personal Care",
-      name: "Plum Green Tea Alcohol-Free Toner 200ml",
-      description:
-        "Make this an essential part of your skin care regimen for clear, smooth, well-toned skin.",
-      image_Url: [
-        {
-          public_id: "test",
-          url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
-        },
-        {
-          public_id: "test",
-          url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
-        },
-      ],
-      shop: {
-        name: "Apple Pharmacy.",
-        shop_avatar: {
-          public_id: "test",
-          url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
-        },
-        ratings: 4.2,
-      },
-      price: 1099,
-      discount_price: 1049,
-      rating: 4,
-      total_sell: 75,
-      stock: 10,
-      // category:"Personal Care"
-    },
-    {
-      id: 4,
-      category:"Wellness & Fitness",
-      name: "100% Whey Gold Standard 1 lbs",
-      description:
-        "Whey Protein Isolates (WPI) are the purest form of whey protein that currently exists. WPIs are costly to use, but rate among the best proteins that money can buy.",
-      image_Url: [
-        {
-          public_id: "test",
-          url: "https://i0.wp.com/eccocibd.com/wp-content/uploads/2022/01/1802NL02_1.png?fit=550%2C550&ssl=1",
-        },
-        {
-          public_id: "test",
-          url: "https://i0.wp.com/eccocibd.com/wp-content/uploads/2022/01/1802NL02_1.png?fit=550%2C550&ssl=1",
-        },
-      ],
-      shop: {
-        name: "Shahriar Pharmacy",
-        shop_avatar: {
-          public_id: "test",
-          url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
-        },
-        ratings: 4.2,
-    //   category:"Wellness & Fitness"
-      },
-      price: 100,
-      discount_price: 79,
-      rating: 4,
-      total_sell: 12,
-      stock: 10,
-    },
+  export const productData = [ 
+    { 
+        id: 1, 
+        category: "Baby Care", 
+        name: "Sanosan Baby Care Cream 100ml", 
+        description: "Nourish your baby's delicate skin from head to toe with our rich, natural milk protein-infused cream...", 
+        image_Url: [ 
+            { public_id: "test", url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png" }, 
+            { public_id: "test", url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png" }, 
+        ], 
+        shop: { 
+            name: "Apple Pharmacy.", 
+            shop_avatar: { public_id: "test", url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png" }, 
+            ratings: 4.2, 
+        }, 
+        price: 1099, 
+        discount_price: 1049, 
+        rating: 4, 
+        total_sell: 35, 
+        stock: 10, 
+    }, 
+    { 
+        id: 2, // Changed from 1 to 2
+        category: "Women's Care", 
+        name: "Sirona Natural pH balanced Intimate Wash 100ml", 
+        description: "Sirona’s Refreshing Intimate Wash is formulated with ingredients keeping in mind the extra sensitive skin...", 
+        image_Url: [ 
+            { public_id: "test", url: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg" }, 
+            { public_id: "test", url: "https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg" }, 
+        ], 
+        shop: { 
+            name: "Amazon Pharmacy", 
+            shop_avatar: { public_id: "test", url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png" }, 
+            ratings: 4.2, 
+        }, 
+        discount_price: 1099, 
+        rating: 5, 
+        total_sell: 80, 
+        stock: 10, 
+    }, 
+    { 
+        id: 3, // Changed from 1 to 3
+        category: "Personal Care", 
+        name: "Plum Green Tea Alcohol-Free Toner 200ml", 
+        description: "Make this an essential part of your skin care regimen for clear, smooth, well-toned skin.", 
+        image_Url: [ 
+            { public_id: "test", url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png" }, 
+            { public_id: "test", url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png" }, 
+        ], 
+        shop: { 
+            name: "Apple Pharmacy.", 
+            shop_avatar: { public_id: "test", url: "https://www.hatchwise.com/wp-content/uploads/ 2022/05/amazon-logo-1024x683.png" }, 
+            ratings: 4.2, 
+        }, 
+        price: 1099, 
+        discount_price: 1049, 
+        rating: 4, 
+        total_sell: 75, 
+        stock: 10, 
+    }, 
+    { 
+        id: 4, 
+        category: "Wellness & Fitness", 
+        name: "100% Whey Gold Standard 1 lbs", 
+        description: "Whey Protein Isolates (WPI) are the purest form of whey protein that currently exists...", 
+        image_Url: [ 
+            { public_id: "test", url: "https://i0.wp.com/eccocibd.com/wp-content/uploads/2022/01/1802NL02_1.png?fit=550%2C550&ssl=1" }, 
+            { public_id: "test", url: "https://i0.wp.com/eccocibd.com/wp-content/uploads/2022/01/1802NL02_1.png?fit=550%2C550&ssl=1" }, 
+        ], 
+        shop: { 
+            name: "Shahriar Pharmacy", 
+            shop_avatar: { public_id: "test", url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png" }, 
+            ratings: 4.2, 
+        }, 
+        price: 100, 
+        discount_price: 79, 
+        rating: 4, 
+        total_sell: 12, 
+        stock: 10, 
+    }, 
+];
+
+
     // {
     //   id: 5,
     //   category:"Shoes",
@@ -563,7 +523,7 @@ export const navItems = [
     //   total_sell: 20,
     //   stock: 10,
     // },
-  ];
+  // ];
   
   export const footerProductLinks = [
     {

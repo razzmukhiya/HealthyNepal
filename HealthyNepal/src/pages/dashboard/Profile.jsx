@@ -1,18 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux';
 import Sidebar from '../../components/UserDashboard/Sidebar';
 import NavTop from '../../components/UserDashboard/NavTop';
 import "../../styles/Profile.css";
 
-
 const Profile = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [phone, setPhone] = useState('');
+  const { user } = useSelector((state) => state.user);
+  
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [username, setUsername] = useState(user?.username || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [dateOfBirth, setDateofBirth] = useState('');
-  const [gender, setGender] = ('');
+  const [dateOfBirth, setDateofBirth] = useState(user?.dateOfBirth || '');
+  const [gender, setGender] = useState(user?.gender || '');
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setUsername(user.username || '');
+      setPhone(user.phone || '');
+      setDateofBirth(user.dateOfBirth || '');
+      setGender(user.gender || '');
+    }
+  }, [user]);
   return (
     <div>
       <NavTop />

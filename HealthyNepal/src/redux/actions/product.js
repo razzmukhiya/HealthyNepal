@@ -1,5 +1,5 @@
 import axios from "axios";
-import { server } from "../../../server";
+import { server } from "../../../server"; // Correct the import path
 
 // create product
 export const createProduct =
@@ -22,6 +22,7 @@ export const createProduct =
 
       const { data } = await axios.post(
         `${server}/product/create-product`,
+      {
         name,
         description,
         category,
@@ -31,6 +32,7 @@ export const createProduct =
         stock,
         shopId,
         images,
+      }
       );
       dispatch({
         type: "productCreateSuccess",
@@ -99,7 +101,9 @@ export const getAllProducts = () => async (dispatch) => {
       type: "getAllProductsRequest",
     });
 
-    const { data } = await axios.get(`${server}/product/get-all-products`);
+    const response = await axios.get(`${server}/product/get-all-products`);
+    console.log("API Response:", response.data); // Log the API response
+    const { data } = response;
     dispatch({
       type: "getAllProductsSuccess",
       payload: data.products,

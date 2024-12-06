@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import "../../styles/login.css";
 import axios from "axios";
 import { server } from "../../../server";
 import { toast } from "react-toastify";
 import Navbar from '../Navbar';
+import { loadUser } from "../../redux/actions/user";
+// import Footer from '../Footer';
 // import { response } from "express";
 
     const Login = () => {
       const navigate = useNavigate();
+      const dispatch = useDispatch();
       const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
       const [loading, setLoading] = useState(false);
@@ -26,10 +30,12 @@ import Navbar from '../Navbar';
           },
             { withCredentials: true}
           )
-          .then((res) => {
+          .then(async (res) => {
+            localStorage.setItem("accessToken", res.data.accessToken); // Store access token
+            localStorage.setItem("refreshToken", res.data.refreshToken); // Store refresh token
             toast.success("Login Success!");
-            navigate("/dashboard");
-            window.location.reload(true);
+            await dispatch(loadUser()); // Load user data after successful login
+            navigate("/");
           })
           .catch((err) => {
             const errorMessage = err.response ? err.response.data.message : "An unexpected error occured.";
@@ -75,6 +81,7 @@ import Navbar from '../Navbar';
             </NavLink>
           </form>
         </div>
+        {/* <Footer /> */}
         </>
     //   );
     // };

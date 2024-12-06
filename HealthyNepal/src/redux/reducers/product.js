@@ -1,85 +1,13 @@
-// import { createReducer } from "@reduxjs/toolkit";
-
-// const initialState = {
-//   isLoading: true,
-//   products: [],
-//   allProducts: [],
-//   product: null,
-//   success: false,
-//   error: null,
-//   message: null,
-// };
-
-// export const productReducer = createReducer(initialState, {
-//   productCreateRequest: (state) => {
-//     state.isLoading = true;
-//   },
-//   productCreateSuccess: (state, action) => {
-//     state.isLoading = false;
-//     state.product = action.payload;
-//     state.success = true;
-//   },
-//   productCreateFail: (state, action) => {
-//     state.isLoading = false;
-//     state.error = action.payload;
-//     state.success = false;
-//   },
-
-//   // get all products of shop
-//   getAllProductsShopRequest: (state) => {
-//     state.isLoading = true;
-//   },
-//   getAllProductsShopSuccess: (state, action) => {
-//     state.isLoading = false;
-//     state.products = action.payload;
-//   },
-//   getAllProductsShopFailed: (state, action) => {
-//     state.isLoading = false;
-//     state.error = action.payload;
-//   },
-
-//   // delete product of a shop
-//   deleteProductRequest: (state) => {
-//     state.isLoading = true;
-//   },
-//   deleteProductSuccess: (state, action) => {
-//     state.isLoading = false;
-//     state.message = action.payload;
-//   },
-//   deleteProductFailed: (state, action) => {
-//     state.isLoading = false;
-//     state.error = action.payload;
-//   },
-
-//   // get all products
-//   getAllProductsRequest: (state) => {
-//     state.isLoading = true;
-//   },
-//   getAllProductsSuccess: (state, action) => {
-//     state.isLoading = false;
-//     state.allProducts = action.payload;
-//   },
-//   getAllProductsFailed: (state, action) => {
-//     state.isLoading = false;
-//     state.error = action.payload;
-//   },
-  
-//   clearErrors: (state) => {
-//     state.error = null;
-//   },
-// });
-
-
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: true,
-  products: [], // Initialize products
-  allProducts: [], // Initialize allProducts
-  product: null, // Initialize product
-  success: false, // Initialize success
-  error: null, // Initialize error
-  message: null, // Initialize message
+  isLoading: false,
+  product: null,
+  success: false,
+  products: [],
+  allProducts: [],
+  error: null,
+  message: null,
 };
 
 export const productReducer = createReducer(initialState, (builder) => {
@@ -97,6 +25,8 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
       state.success = false;
     })
+    
+    // get all products of shop
     .addCase('getAllProductsShopRequest', (state) => {
       state.isLoading = true;
     })
@@ -108,6 +38,8 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
     })
+
+    // delete product of a shop
     .addCase('deleteProductRequest', (state) => {
       state.isLoading = true;
     })
@@ -115,10 +47,12 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.message = action.payload;
     })
-    .addCase('deleteProductFailed', (state, action) => {
+    .addCase('deleteProductFail', (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
+
+    // get all products
     .addCase('getAllProductsRequest', (state) => {
       state.isLoading = true;
     })
@@ -126,10 +60,11 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.allProducts = action.payload;
     })
-    .addCase('getAllProductsFailed', (state, action) => {
+    .addCase('getAllProductsFail', (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
+    
     .addCase('clearErrors', (state) => {
       state.error = null;
     });

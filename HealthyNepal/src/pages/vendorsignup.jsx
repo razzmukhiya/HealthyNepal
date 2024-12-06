@@ -1,12 +1,12 @@
-import React from 'react'
-import '../styles/vendorsignup.css'
-import Navbar from '../components/Navbar'
-
+import React from 'react';
+import '../styles/vendorsignup.css';
+import Navbar from '../components/Navbar';
+// import Footer from '../components/Footer';
 const vendorsignup = () => {
   return (
       <>
       <Navbar />
-    <div className='vendor-signup-container'>
+      <div className='vendor-signup-container'>
       <h2>CREATE A NEW ACCOUNT</h2>
 
     <form action="#">
@@ -22,6 +22,7 @@ const vendorsignup = () => {
     </form>
 
     </div>
+    {/* <Footer /> */}
     </>
   )
 }
