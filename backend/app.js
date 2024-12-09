@@ -1,5 +1,6 @@
 const express = require('express');
 const ErrorHandler = require('./middleware/error');
+const catchAsyncError = require('./middleware/catchAsyncError');
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
@@ -15,25 +16,20 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(express.json());
-app.use(cookieParser())
-// app.use(cors());
+// Increase the limit for JSON and URL-encoded payloads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+app.use(cookieParser());
 app.use("/", express.static("uploads"));
 app.use("/test", (req, res) => {
     res.send("Hello world!");
   });
 
-
-
-  app.use(bodyParser.json({ limit: '100mb' })); // Set limit to 10MB or adjust as needed
-  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true })); // Adjust as needed
-
-
-
 const storage = multer.memoryStorage(); // or use diskStorage
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }
+    limits: { fileSize: 50 * 1024 * 1024 } // Increase the file size limit to 50MB
   });
 
   app.post('/upload', upload.single('file'), (req, res) => {
@@ -56,10 +52,12 @@ if (process.env.NODE_ENV !== "PRODUCTION"){
 
 //import routes
 const user = require("./controller/user");
-const catchAsyncError = require('./middleware/catchAsyncError');
+const shop = require("./controller/shop");
+
 // const multer = require('multer');
 
 app.use("/api/v2/user", user);
+app.use("/api/v2/shop", shop);
 
 
 app.use(catchAsyncError(ErrorHandler));

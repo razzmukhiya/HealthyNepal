@@ -13,44 +13,44 @@ const Vendorsidebar = () => {
         <p>E-Commerce</p>
       </div>
       <div className="nav">
-        <NavLink to="/vendordashboard" className="VendorNavl" >
+        <NavLink to="/sellerdashboard" className="VendorNavl" >
           <p>Dashboard</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendororders" className="VendorNavl" >
+        <NavLink to="/sellerorders" className="VendorNavl" >
           <p>Orders</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendorproducts" className="VendorNavl" >
+        <NavLink to="/sellerproducts" className="VendorNavl" >
           <p>Products</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendoraddproduct" className="VendorNavl" >
+        <NavLink to="/addproducts" className="VendorNavl" >
           <p>Add Product</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendorwithdrawl" className="VendorNavl" >
+        <NavLink to="/withdrawl" className="VendorNavl" >
           <p>Withdrawl</p>
           <br />
         </NavLink>
 
         <p>Pages</p>
 
-        <NavLink to="/vendorcustomersupport" className="VendorNavl" >
+        <NavLink to="/sellercustomersupport" className="VendorNavl" >
           <p>Customer Support</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendorchatsupport" className="VendorNavl" >
+        <NavLink to="/sellerchatsupport" className="VendorNavl" >
           <p>Chat Support</p>
           <br />
         </NavLink>
 
-        <NavLink to="/vendorprofile" className="VendorNavl" >
+        <NavLink to="/sellerprofile" className="VendorNavl" >
           <p>Profile</p>
           <br />
         </NavLink>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Vendorsidebar from "../../components/VendorDashboard/Vendorsidebar";
-import Vendornavtop from '../../components/VendorDashboard/Vendornavtop';
+import Vendorsidebar from "./Vendorsidebar";
+import Vendornavtop from './Vendornavtop';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -21,12 +21,12 @@ const AddProducts = () => {
     stoke: "",
   })
   return (
-    <div>
-      <Vendorsidebar />
-      <Vendornavtop />
-      
-      
+    <>
+    <div className="create-product-container">
+      <h5></h5>
     </div>
+     
+    </>
   )
 }
 

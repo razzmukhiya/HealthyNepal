@@ -1,6 +1,6 @@
 import React from 'react';
-import Vendorsidebar from "../../components/VendorDashboard/Vendorsidebar";
-import Vendornavtop from '../../components/VendorDashboard/Vendornavtop';
+import Vendorsidebar from "../../components/SellerDashboard/Vendorsidebar";
+import Vendornavtop from '../../components/SellerDashboard/Vendornavtop';
 
 const Setting = () => {
   return (

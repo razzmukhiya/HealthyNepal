@@ -182,10 +182,31 @@ router.get(
         return next(new ErrorHandler("User doesn't exist", 404));
       }
 
-      res.status(200).json({
-        success: true,
-        user,
-      });
+      // Check if the user is a seller
+      if (user.role === 'seller') {
+        // Return only seller-specific data
+        res.status(200).json({
+          success: true,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            shop: user.shop, // Assuming the user model has a shop field
+          },
+        });
+      } else {
+        // Return user data for non-sellers
+        res.status(200).json({
+          success: true,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      }
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

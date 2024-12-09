@@ -82,7 +82,7 @@ const Navbar = () => {
           <hr />
         </NavLink>
 
-        <NavLink to="/vendor" className="Navlink">
+        <NavLink to="/sellersignup" className="Navlink">
           <p>Became a Seller</p>
           <hr />
         </NavLink>

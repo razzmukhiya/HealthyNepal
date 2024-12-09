@@ -1,0 +1,124 @@
+.shop-login-container {
+    min-height: 100vh;
+    background-color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    margin-left: 80vh;
+}
+
+.shop-login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.shop-login-header h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.shop-login-form-container {
+    margin: 2rem auto;
+    max-width: 400px;
+}
+
+.shop-login-form {
+    background-color: #ffffff;
+    padding: 2rem 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.form-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    color: #9ca3af;
+}
+
+.password-input-container {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 0;
+    top: 0.3rem;
+    cursor: pointer;
+}
+
+.form-option {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    color: #1f2937;
+}
+
+.checkbox {
+    height: 1rem;
+    width: 1rem;
+    color: #2563eb;
+    border-radius: 0.25rem;
+}
+
+.forget-password-link {
+    font-size: 0.875rem;
+    color: #3b83f6;
+    transition: color 0.2s;
+}
+
+.forget-password-link:hover {
+    color: #2563eb;
+}
+
+.submit-button {
+    width: 100%;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    color: #ffffff;
+    background-color: #3b82f6;
+    transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+    background-color: #2563eb;
+}
+
+.signup-prompt {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: #1f2937;
+}
+
+.signup-link {
+    color: #3b82f6;
+    padding-left: 0.5rem;
+}

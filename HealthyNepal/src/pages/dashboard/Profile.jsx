@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Sidebar from '../../components/UserDashboard/Sidebar';
 import NavTop from '../../components/UserDashboard/NavTop';
 import "../../styles/Profile.css";
+import { loadSeller } from '../../redux/actions/user';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -26,98 +28,98 @@ const Profile = () => {
       setGender(user.gender || '');
     }
   }, [user]);
+
+  const handleLoadSeller = () => {
+    dispatch(loadSeller());
+  };
+
   return (
     <div>
       <NavTop />
       <div className="components">
-      <Sidebar /> 
+        <Sidebar /> 
       </div>
       <div className="basic-info">
         <h2>Basic Information</h2>
-        <form >
+        <form>
           <div className="form-group">
             <label htmlFor="name">Name:</label>
             <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            
-             />
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="email">Email:</label>
             <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="username">Username:</label>
             <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="form-group">
             <label htmlFor="phone">Phone:</label>
             <input 
-            type="phone" 
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+              type="phone" 
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
           <div className="form-group">
             <label htmlFor="password">Current Password:</label>
             <input
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </div>
           <div className="form-group">
             <label htmlFor="newPassword">New Password:</label>
             <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
           <div className="form-group">
             <label htmlFor="dateofBirth"> Date of Birth:</label>
             <input 
-            type="date" 
-            id='dateofBirth'
-            value={dateOfBirth}
-            onChange={(e) => setDateofBirth(e.target.value)}
+              type="date" 
+              id='dateofBirth'
+              value={dateOfBirth}
+              onChange={(e) => setDateofBirth(e.target.value)}
             />
           </div>
           <div className="form-group">
             <label htmlFor="gender">Gender:</label>
             <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
             >
               <option value="">Select</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="other">Other</option>
-             
             </select>
 
             <button className='btn' type='submit'>Submit</button>
           </div>
-
         </form>
+        <button onClick={handleLoadSeller}>Load Seller</button>
       </div>
-
-
-      </div>
+    </div>
   )
 }
 
-export default Profile
+export default Profile;
