@@ -1,65 +1,103 @@
-const ErrorHandler = require("../utils/ErrorHandler");
+ const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("./catchAsyncError");
 const jwt = require("jsonwebtoken");
-const User = require("../model/user");
+const Shop = require("../model/shop");
+
+// List of public routes that don't require authentication
+const publicRoutes = [
+    '/product/get-all-products',
+    '/product/get-product',
+    '/user/login-user',
+    '/user/signup',
+    '/user/token',
+    '/shop/login-shop',
+    '/shop/create-shop'
+];
+
+// Helper function to check if a route is public
+const isPublicRoute = (path) => {
+    return publicRoutes.some(route => path.includes(route));
+};
 
 exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    console.log("Authorization header:", authHeader); // Debug log
-
-    const token = authHeader && authHeader.split(' ')[1]; // Remove Bearer prefix
-
-    if (!token) {
-        console.log("No token provided in the request");
-        return res.status(401).json({ message: 'No token provided, authorization denied' });
-    }
-
-    console.log("Received token:", token); // Debug log
-
     try {
-        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = user;
-        console.log("User authenticated:", user); // Debug log
-        next();
-    } catch (err) {
-        console.log("Error verifying token:", err); // Debug log
-        if (err.name === 'TokenExpiredError') {
-            console.log("Token expired");
-            return res.status(401).json({ message: 'Token expired' });
+        // Skip authentication for public routes
+        if (isPublicRoute(req.path)) {
+            return next();
         }
-        console.log("Invalid token:", err);
-        return res.status(403).json({ message: 'Invalid token' });
+
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login to continue"
+            });
+        }
+
+        const token = authHeader.split(' ')[1];
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login to continue"
+            });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        
+        // Check if this is a seller token
+        const seller = await Shop.findById(decoded.id);
+        if (seller) {
+            req.user = { id: decoded.id, role: 'seller' };
+        } else {
+            // If not a seller, treat as regular user
+            req.user = { id: decoded.id, role: 'user' };
+        }
+        next();
+    } catch (error) {
+        // Skip authentication errors for public routes
+        if (isPublicRoute(req.path)) {
+            return next();
+        }
+
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                success: false,
+                message: "Token expired, please login again"
+            });
+        }
+        return res.status(401).json({
+            success: false,
+            message: "Authentication failed"
+        });
     }
 });
 
 exports.isSeller = catchAsyncErrors(async (req, res, next) => {
-    console.log("isSeller middleware called");
-
-    if (!req.user) {
-        console.log("User not authenticated");
-        return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
-        const user = await User.findById(req.user.id);
-
-        if (!user) {
-            console.log("User not found");
-            return res.status(404).json({ message: 'User not found' });
+        if (!req.user || !req.user.id || req.user.role !== 'seller') {
+            return res.status(401).json({
+                success: false,
+                message: "Please login as a seller to continue"
+            });
         }
 
-        console.log("User found:", user); // Debug log
-
-        if (user.role !== 'seller') {
-            console.log("User is not a seller");
-            return res.status(403).json({ message: 'User is not a seller' });
+        const seller = await Shop.findById(req.user.id);
+        
+        if (!seller) {
+            return res.status(404).json({
+                success: false,
+                message: "Seller not found"
+            });
         }
 
-        req.seller = user;
-        console.log("User is a seller:", user); // Debug log
+        req.seller = seller;
         next();
-    } catch (err) {
-        console.log("Error in isSeller middleware:", err);
-        return next(new ErrorHandler(err.message, 500));
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error verifying seller status"
+        });
     }
 });

@@ -4,19 +4,22 @@ import { useNavigate } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { server } from '../../../server';
-// import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { server } from '../../utils/api';
 import { HiOutlineDocumentAdd } from "react-icons/hi";
+import { FaFilePdf } from "react-icons/fa";
 import "../../styles/Sellersignup.css";
 
 const SellerSignup = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     phoneNumber: "",
     address: "",
     zipCode: "",
-    document: "",
+    document: null,
+    documentPreview: null,
     password: "",
   });
 
@@ -33,47 +36,93 @@ const SellerSignup = () => {
     }
   }, [successMessage]);
 
-  // useEffect(() => {
-    
-  // }, [formData]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    setFormData((preData) => {
-      const updatedData = { ...preData, [name]: value };
-      return updatedData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleFileInputChange = (e) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setFormData((preData) => ({ ...preData, document: reader.result }));
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        toast.error('Please upload a valid image (JPEG, PNG) or PDF file');
+        return;
       }
-    };
-    reader.readAsDataURL(e.target.files[0]);
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size should be less than 5MB');
+        return;
+      }
+
+      // Store the file object
+      setFormData(prev => ({ 
+        ...prev, 
+        document: file,
+        documentPreview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null 
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${server}/shop/create-shop`, formData);
-      toast.success(response.data.message);
-      setFormData({
-        email: "",
-        name: "",
-        phoneNumber: "",
-        address: "",
-        zipCode: "",
-        document: "",
-        password: "",
+      const form = new FormData();
+      
+      // Append all form fields except document and documentPreview
+      Object.keys(formData).forEach(key => {
+        if (key !== 'document' && key !== 'documentPreview') {
+          form.append(key, formData[key]);
+        }
       });
-      setSuccessMessage(true);
-      navigate('/sellerlogin');
+      
+      // Append document file if exists
+      if (formData.document instanceof File) {
+        form.append('document', formData.document);
+      }
+
+      const response = await axios.post(`${server}/shop/create-shop`, form, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
+      });
+
+      if (response.data.success && response.data.token) {
+        // Store token in localStorage
+        localStorage.setItem('sellerAccessToken', response.data.token);
+        
+        // Dispatch registration success
+        dispatch({
+          type: 'SellerRegisterSuccess',
+          payload: { user: response.data.user }
+        });
+        
+        toast.success('Registration successful!');
+        setFormData({
+          email: "",
+          name: "",
+          phoneNumber: "",
+          address: "",
+          zipCode: "",
+          document: null,
+          documentPreview: null,
+          password: "",
+        });
+        setSuccessMessage(true);
+        
+        // Navigate directly to dashboard since we have the token
+        navigate('/seller/dashboard');
+      } else {
+        throw new Error('Registration failed: Invalid response from server');
+      }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || 'Registration failed');
     }
   };
 
@@ -84,9 +133,10 @@ const SellerSignup = () => {
       </div>
       <div className="form-container">
         <form className="shop-create-form" onSubmit={handleSubmit}>
-          {[{ label: 'Name', name: "name", type: "text" },
+          {[
+            { label: 'Name', name: "name", type: "text", required: true },
             { label: 'Phone Number', name: "phoneNumber", type: "tel", required: true },
-            { label: 'Email', name: "email", type: "email" },
+            { label: 'Email', name: "email", type: "email", required: true },
             { label: 'Address', name: "address", type: "text", required: true },
             { label: "Zip Code", name: "zipCode", type: "number", required: true },
           ].map(({ label, name, type, required }) => (
@@ -112,6 +162,7 @@ const SellerSignup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 className='form-input'
+                autoComplete="new-password"
               />
               {visible ? (
                 <AiOutlineEye className='eye-icon' onClick={() => setVisible(false)} />
@@ -125,7 +176,15 @@ const SellerSignup = () => {
             <div className="document-container">
               <span className="document-preview">
                 {formData.document ? (
-                  <img src={formData.document} alt="document" className='document-image' />
+                  formData.document.type.startsWith('image/') ? (
+                    <img 
+                      src={formData.documentPreview} 
+                      alt="document preview" 
+                      className='document-image'
+                    />
+                  ) : (
+                    <FaFilePdf className='document-icon' />
+                  )
                 ) : (
                   <HiOutlineDocumentAdd className='document-icon' />
                 )}
@@ -136,8 +195,10 @@ const SellerSignup = () => {
                   type="file"
                   name='document'
                   id='file-input'
+                  accept=".jpg,.jpeg,.png,.pdf"
                   onChange={handleFileInputChange}
                   className='file-input'
+                  required
                 />
               </label>
             </div>

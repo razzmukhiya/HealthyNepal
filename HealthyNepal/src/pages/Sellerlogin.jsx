@@ -1,31 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Sellersignin from "../components/SellerDashboard/Sellersignin";
 import Navbar from "../components/Navbar";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Sellerlogin = () => {
   const navigate = useNavigate();
-  const { isSeller, isLoading, user } = useSelector((state) => state.seller);
+  const location = useLocation();
+  const { isAuthenticated, seller, isLoading } = useSelector((state) => state.seller);
 
-  useEffect(() => {
-    if (isSeller === true) {
-      navigate(`/sellerdashboard`);
+  React.useEffect(() => {
+    // Only redirect if we're authenticated and not in a loading state
+    if (isAuthenticated && seller && !isLoading) {
+      const returnUrl = location.state?.from?.pathname || '/seller/dashboard';
+      navigate(returnUrl);
     }
-  }, [isLoading, isSeller])
+  }, [isAuthenticated, seller, isLoading, navigate, location]);
 
+  // Don't show loading state here, let Sellersignin handle its own loading state
   return (
     <div>
       <Navbar />
       <Sellersignin />
-      
-      {isSeller && (
-        <div className="seller-info">
-          <p>Welcome, {user?.name}</p>
-        </div>
-      )}
     </div>
-  )
-}
+  );
+};
 
-export default Sellerlogin
+export default Sellerlogin;

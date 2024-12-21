@@ -1,59 +1,46 @@
-const { connect } = require("mongoose");
 const app = require("./app");
 const connectDatabase = require("./db/Database");
-// const multer = require("multer");
+const fs = require('fs'); 
+const logError = require('./utils/logger'); // Import the logging utility
+const path = require('path');
 
-
-
-// const cloudinary = require("cloudinary");
-// const bodyParser = require("body-parser");
-
-
-// app.use(bodyParser.json({ limit: '10mb' }));
-// app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-
-// Configure Multer
-
-
-
-
-  
-
+// Handle uncaught exceptions
 process.on("uncaughtException", (err) => {
     console.log(`Error: ${err.message}`);
     console.error('Uncaught Exception:', err);
-    console.log(`Shutting down the server for handling uncaught exception`);
-})
+    process.exit(1);
+});
 
-if(process.env.NODE_ENV !== "PRODUCTION"){
+// Load environment variables
+if (process.env.NODE_ENV !== "PRODUCTION") {
     require("dotenv").config({ path: "backend/config/.env" });
 }
 
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-
-//connect db
+// Connect to database
 connectDatabase();
 
-
-
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET
-// })
-
-const server = app.listen(process.env.PORT,() => {
-    console.log(`Server is running on http://localhost:${process.env.PORT}`
-
-    );
+// Start server
+const server = app.listen(process.env.PORT || 8000, () => {
+    console.log(`Server is running on http://localhost:${process.env.PORT || 8000}`);
 });
 
-//unhandled promise rejection
-process.on("unhandledRejection", (err, promise) => {
-    console.log(`Shutting down the server for  ${err.message}`);
-    console.log(`shutting down the server for unhandle promise rejection`);
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log(`Shutting down the server due to unhandled promise rejection`);
     
     server.close(() => {
         process.exit(1);
     });
+});
+
+// Handle server errors
+server.on('error', (error) => {
+    console.error('Server error:', error);
 });

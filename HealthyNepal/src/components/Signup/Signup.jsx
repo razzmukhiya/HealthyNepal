@@ -16,41 +16,34 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleFileInputChange = (e) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatar(reader.result);
-      }
-    };
-    reader.readAsDataURL(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      // Store the actual file
+      setAvatar(file);
+      
+      // Preview the image
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          const previewElement = document.querySelector('.avatar-preview img');
+          if (previewElement) {
+            previewElement.src = reader.result;
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // axios
-    //   .post(`${server}/user/create-user`, { name, email, password, avatar })
-    //   .then((res) => {
-    //     toast.success(res.data.message);
-    //     setName("");
-    //     setEmail("");
-    //     setPassword("");
-    //     setAvatar(null);
-    //   })
-    //   .catch((error) => {
-    //     toast.error(error.response.data.message);
-    //   });
-
-    const formData = new FormData(); // Create a new FormData instance
+    const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
     if (avatar) {
-      // Only append avatar if it exists
-      const blob = await fetch(avatar).then(res => res.blob());
-      formData.append('avatar', blob, 'avatar.png'); // Append the blob with a filename
+      formData.append('avatar', avatar);
     }
 
     axios

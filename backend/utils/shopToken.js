@@ -10,10 +10,22 @@ const sendShopToken = (user, statusCode, res) => {
     //   secure: true,
     };
   
+    // Remove sensitive data before sending
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      address: user.address,
+      phoneNumber: user.phoneNumber,
+      zipCode: user.zipCode
+    };
+
     res.status(statusCode).cookie("seller_token", token, options).json({
       success: true,
-      user,
-      token,
+      user: userData,
+      token: token
     });
   };
   

@@ -48,6 +48,18 @@ hr {
     position: relative;
 }
 
+.avatar-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.avatar-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .user-profile span {
     color: inherit;
     font-size: 14px;

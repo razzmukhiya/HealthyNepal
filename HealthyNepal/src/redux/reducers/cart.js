@@ -1,32 +1,31 @@
-import { createReducer } from "@reduxjs/toolkit";
-
 const initialState = {
-  cart: localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
-    : [],
+  cart: [],
+  loading: false,
+  error: null,
 };
 
-export const cartReducer = createReducer(initialState, {
-  addToCart: (state, action) => {
-    const item = action.payload;
-    const isItemExist = state.cart.find((i) => i._id === item._id);
-    if (isItemExist) {
+export const cartReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'ADD_TO_CART':
       return {
         ...state,
-        cart: state.cart.map((i) => (i._id === isItemExist._id ? item : i)),
+        cart: [...state.cart, action.payload],
       };
-    } else {
+    case 'REMOVE_FROM_CART':
       return {
         ...state,
-        cart: [...state.cart, item],
+        cart: state.cart.filter((item) => item._id !== action.payload),
       };
-    }
-  },
-
-  removeFromCart: (state, action) => {
-    return {
-      ...state,
-      cart: state.cart.filter((i) => i._id !== action.payload),
-    };
-  },
-});
+    case 'UPDATE_CART_QUANTITY':
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item._id === action.payload.id
+            ? { ...item, qty: action.payload.qty }
+            : item
+        ),
+      };
+    default:
+      return state;
+  }
+};

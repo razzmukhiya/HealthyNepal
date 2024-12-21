@@ -31,6 +31,10 @@ const Categories = () => {
       </div>
 
       <div className="sections category-grid" id='categories'>
+        <div className="category-header">
+          <h2>Shop by Categories</h2>
+          <p>Find products in your favorite categories</p>
+        </div>
         <div className="grid">
           {categoriesData && categoriesData.length > 0 ? (
             categoriesData.map((item) => (
@@ -38,12 +42,16 @@ const Categories = () => {
                 key={item.id}
                 onClick={() => handleSubmit(item)}
               >
-                <h5 className='category-title'>{item.title}</h5>
                 <img src={item.image_Url} className='category-image' alt={item.title} />
+                <h5 className='category-title'>{item.title}</h5>
+                {item.subTitle && <p className="category-subtitle">{item.subTitle}</p>}
               </div>
             ))
           ) : (
-            <p>No categories available.</p> // Handle empty state
+            <div className="no-categories">
+              <p>No categories available at the moment.</p>
+              <p>Please check back later.</p>
+            </div>
           )}
         </div>
       </div>

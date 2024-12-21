@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { loadUser } from "../redux/actions/user";
+import { LOGOUT } from "../redux/reducers/authSlice";
+import { loadSeller, logout as sellerLogout } from "../redux/actions/sellers";
+import PropTypes from 'prop-types';
 import "../styles/Navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { productData } from "../../src/statics/data";
+import { server } from "../utils/api";
 import { RxAvatar } from "react-icons/rx";
 
 const Navbar = () => {
@@ -14,19 +18,24 @@ const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated: isSeller, seller } = useSelector((state) => state.sellers);
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const handleLogout = () => {
+  const handleUserLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    window.location.href = "/login";
+    dispatch(LOGOUT());
+    navigate("/login");
   };
 
-  // Close dropdown when clicking outside
+  const handleSellerLogout = () => {
+    dispatch(sellerLogout());
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.user-profile')) {
@@ -42,8 +51,8 @@ const Navbar = () => {
 
   useEffect(() => {
     dispatch(loadUser());
+    dispatch(loadSeller());
   }, [dispatch]);
-
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -68,12 +77,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
-
-
-
-  
-
   return (
     <div className={`Navbar ${active ? 'active' : ''}`}>
       <div className="NavTop">
@@ -82,14 +85,16 @@ const Navbar = () => {
           <hr />
         </NavLink>
 
-        <NavLink to="/sellersignup" className="Navlink">
-          <p>Became a Seller</p>
-          <hr />
-        </NavLink>
+        {!isSeller && !isAuthenticated && (
+          <NavLink to="/sellersignup" className="Navlink">
+            <p>Become a Seller</p>
+            <hr />
+          </NavLink>
+        )}
 
-        {!isAuthenticated ? (
+        {!isAuthenticated && !isSeller ? (
           <>
-            <NavLink to="/login" className="Navlink">
+            <NavLink to="/login" className="Navlink" onClick={() => setDropdownVisible(false)}>
               <p>Login</p>
               <hr />
             </NavLink>
@@ -99,14 +104,51 @@ const Navbar = () => {
               <hr />
             </NavLink>
           </>
+        ) : isSeller ? (
+          <div className="user-profile" onClick={toggleDropdown}>
+            {seller?.avatar ? (
+              <img 
+                src={`${server}/${seller.avatar}`}
+                alt="seller" 
+                className="avatar-icon avatar-image"
+                onError={(e) => {
+                  console.log("Avatar load error, using RxAvatar");
+                  e.target.style.display = 'none';
+                  e.target.onerror = null;
+                }}
+              />
+            ) : (
+              <RxAvatar size={32} className="avatar-icon" />
+            )}
+            <span className="username">{seller?.name || "Seller"}</span>
+            {dropdownVisible && (
+              <div className="dropdown-menu">
+                <NavLink to="/seller/dashboard" className="dropdown-item">Dashboard</NavLink>
+                <button className="dropdown-item" onClick={handleSellerLogout}>Logout</button>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="user-profile" onClick={toggleDropdown}>
-            <RxAvatar size={32} className="avatar-icon" />
+            {user?.avatar ? (
+              <img 
+                src={`${server}/${user.avatar}`}
+                alt="user" 
+                className="avatar-icon avatar-image"
+                onError={(e) => {
+                  console.log("Avatar load error, using RxAvatar");
+                  e.target.style.display = 'none';
+                  e.target.onerror = null;
+                }}
+              />
+            ) : (
+              <RxAvatar size={32} className="avatar-icon" />
+            )}
             <span className="username">{user?.name || "User"}</span>
             {dropdownVisible && (
               <div className="dropdown-menu">
                 <NavLink to="/dashboard" className="dropdown-item">Dashboard</NavLink>
-                <button className="dropdown-item" onClick={handleLogout}>Logout</button>
+                <button className="dropdown-item" onClick={handleUserLogout}>Logout</button>
               </div>
             )}
           </div>
@@ -135,6 +177,17 @@ const Navbar = () => {
       </div>
     </div>
   );
+};
+
+Navbar.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+    avatar: PropTypes.string
+  }),
+  seller: PropTypes.shape({
+    name: PropTypes.string,
+    avatar: PropTypes.string
+  })
 };
 
 export default Navbar;

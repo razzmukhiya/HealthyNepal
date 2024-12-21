@@ -42,6 +42,15 @@ const shopSchema = new mongoose.Schema({
       required: true,
     },
   },
+  avatar: {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+      default: "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+    },
+  },
   zipCode: {
     type: Number,
     required: true,

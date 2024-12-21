@@ -67,7 +67,8 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   shop: {
-    type: Object,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shop",
     required: true,
   },
   sold_out: {

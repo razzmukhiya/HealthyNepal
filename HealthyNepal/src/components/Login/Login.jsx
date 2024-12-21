@@ -1,86 +1,111 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import "../../styles/login.css";
-import axios from "axios";
-import { server } from "../../../server";
+import api, { endpoints } from "../../utils/api";
+import { loadUser } from "../../redux/actions/user";
+import { login, loadUserRequest, loadUserFail } from "../../redux/reducers/authSlice";
 import { toast } from "react-toastify";
-import Navbar from '../Navbar';
-// import Footer from '../Footer';
-// import { response } from "express";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Get the redirect path from location state, or default to home
+  const from = location.state?.from || "/";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    await axios
-      .post(`${server}/user/login-user`, {
-        email,
-        password,
-      }, { withCredentials: true })
-      .then(async (res) => {
-        localStorage.setItem("accessToken", res.data.accessToken); // Store access token
-        localStorage.setItem("refreshToken", res.data.refreshToken); // Store refresh token
-        console.log("Token stored in localStorage:", res.data.accessToken); // Debug log
-        toast.success("Login Success!");
-        await dispatch(loadUser()); // Load user data after successful login
-        navigate("/");
-      })
-      .catch((err) => {
-        const errorMessage = err.response ? err.response.data.message : "An unexpected error occurred.";
-        setError(errorMessage);
-        toast.error(errorMessage);
-        console.log(err);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const response = await api.post(
+        endpoints.auth.login,
+        { email, password }
+      );
+
+      if (response.error) {
+        throw new Error(response.message);
+      }
+
+      const { success, user, accessToken, refreshToken } = response.data;
+
+      if (!success) {
+        throw new Error("Login failed");
+      }
+
+      // Store tokens in localStorage
+      localStorage.setItem("userAccessToken", accessToken);
+      localStorage.setItem("userRefreshToken", refreshToken);
+
+      // Dispatch login action with user data
+      dispatch(login(user));
+      
+      // Load user data after successful login
+      dispatch(loadUser());
+      
+      toast.success("Login Success!");
+      
+      // Navigate to the attempted URL or home
+      navigate(from, { replace: true });
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "An unexpected error occurred";
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error(err);
+      
+      // Dispatch login fail action
+      dispatch(loadUserFail(errorMessage));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="Login">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            autoComplete="email"
-            required
-            value={email}
-            id="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <br />
-          <input
-            type="password"
-            placeholder="Password"
-            autoComplete="current-password"
-            required
-            name="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" disabled={loading}>Sign In</button>
+    <div className="Login">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          autoComplete="email"
+          required
+          value={email}
+          id="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <input
+          type="password"
+          placeholder="Password"
+          autoComplete="current-password"
+          required
+          name="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Signing In..." : "Sign In"}
+        </button>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
 
-          <NavLink to="/forgetpassword">
-            <p>Forgot Password?</p>
-          </NavLink>
-        </form>
-      </div>
-      {/* <Footer /> */}
-    </>
+        <NavLink to="/forgetpassword">
+          <p>Forgot Password?</p>
+        </NavLink>
+        
+        <div className="signup-link">
+          <p>Don't have an account? <NavLink to="/signup">Sign Up</NavLink></p>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -1,61 +1,68 @@
+import { loadUserRequest, loadUserSuccess, loadUserFail } from '../reducers/authSlice';
+import api from '../../utils/api';
 
-import axios from "axios";
-import { server } from "../../../server";
-
-
-
-//load user
+// load user
 export const loadUser = () => async (dispatch) => {
-    try {
-      dispatch({
-        type: "LOAD_USER_REQUEST",
-      });
-      // Get access token from localStorage
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
-
-      const { data } = await axios.get(`${server}/user/getuser`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        },
-        withCredentials: true,
-      });
-      dispatch({
-        type: "LOAD_USER_SUCCESS",
-        payload: data.user,
-      });
-    } catch (error) {
-      const errorMessage = error.response ? error.response.data.message : "Network Error";
-
-      dispatch({
-        type: "LOAD_USER_FAIL",
-        payload: errorMessage,
-        
-      });
+  try {
+    const token = localStorage.getItem('userAccessToken');
+    if (!token) {
+      // If no token, user is not logged in - this is a normal state
+      return;
     }
-  };
 
-  //load seller
+    dispatch(loadUserRequest());
 
-  export const loadSeller = () => async (dispatch) => {
-    try {
-      dispatch({
-        type: "LoadSellerRequest",
-      });
-      const { data } = await axios.get(`${server}/shop/getSeller`, {
-        withCredentials: true,
-      });
-      dispatch({
-        type: "LoadSellerSuccess",
-        payload: data.seller,
-      });
-    } catch (error) {
-      dispatch({
-        type: "LoadSellerFail",
-        payload: error.response.data.message,
-      });
+    const response = await api.get('/user/getuser');
+    
+    if (response.error) {
+      throw new Error(response.message);
     }
-  };
+
+    const { success, user } = response.data;
+    
+    if (!success) {
+      throw new Error("Failed to load user data");
+    }
+    
+    dispatch(loadUserSuccess(user));
+  } catch (error) {
+    // Only dispatch error for actual API failures
+    if (error.response && error.response.status !== 401) {
+      const errorMessage = error.response?.data?.message || "Network Error";
+      dispatch(loadUserFail(errorMessage));
+    } else {
+      // For 401 unauthorized or no token, silently reset the state
+      dispatch(loadUserSuccess(null));
+    }
+  }
+};
+
+// update user profile
+export const updateProfile = (userData) => async (dispatch) => {
+  try {
+    dispatch(loadUserRequest());
+
+    const token = localStorage.getItem('userAccessToken');
+    if (!token) {
+      dispatch(loadUserFail("No authentication token found. Please login."));
+      return;
+    }
+
+    const response = await api.put('/user/update-profile', userData);
+
+    if (response.error) {
+      throw new Error(response.message);
+    }
+
+    const { success, user } = response.data;
+
+    if (!success) {
+      throw new Error("Failed to update profile");
+    }
+
+    dispatch(loadUserSuccess(user));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Network Error";
+    dispatch(loadUserFail(errorMessage));
+  }
+};

@@ -1,36 +1,66 @@
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
+  isAuthenticated: false,
+  seller: null,
+  error: null,
 };
 
 export const sellerReducer = createReducer(initialState, (builder) => {
   builder
-    .addCase('LoadSellerRequest', (state) => {
+    .addCase("LoadSellerRequest", (state) => {
       state.isLoading = true;
+      state.error = null;
     })
-    .addCase('LoadSellerSuccess', (state, action) => {
-      state.isSeller = true;
+    .addCase("SellerLoginSuccess", (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.seller = action.payload.user;
+      state.error = null;
+    })
+    .addCase("SellerRegisterSuccess", (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.seller = action.payload.user;
+      state.error = null;
+    })
+    .addCase("LoadSellerSuccess", (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.seller = action.payload;
+      state.error = null;
+    })
+    .addCase("LoadSellerFail", (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      state.seller = null;
+      state.error = action.payload;
+    })
+    .addCase("UpdateSellerInfoRequest", (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase("UpdateSellerInfoSuccess", (state, action) => {
       state.isLoading = false;
       state.seller = action.payload;
-    })
-    .addCase('LoadSellerFail', (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-      state.isSeller = false;
-    })
-    .addCase('getAllSellersRequest', (state) => {
-      state.isLoading = true;
-    })
-    .addCase('getAllSellersSuccess', (state, action) => {
-      state.isLoading = false;
-      state.sellers = action.payload;
-    })
-    .addCase('getAllSellerFailed', (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    })
-    .addCase('clearErrors', (state) => {
       state.error = null;
+    })
+    .addCase("UpdateSellerInfoFail", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
+    .addCase("SellerLogout", (state) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      state.seller = null;
+      state.error = null;
+    })
+    .addCase("clearErrors", (state) => {
+      state.error = null;
+    })
+    // Add default case to handle unknown actions
+    .addDefaultCase((state) => {
+      return state;
     });
 });

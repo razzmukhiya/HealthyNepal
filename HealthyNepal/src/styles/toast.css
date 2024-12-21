@@ -1,0 +1,273 @@
+/* Toast Container */
+.toast-container {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  pointer-events: none;
+}
+
+/* Container Positions */
+.toast-top-right {
+  top: 0;
+  right: 0;
+}
+
+.toast-top-left {
+  top: 0;
+  left: 0;
+}
+
+.toast-bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.toast-bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+.toast-top-center {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toast-bottom-center {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Individual Toast */
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  pointer-events: auto;
+  position: relative;
+}
+
+/* Toast Types */
+.toast-info {
+  border-left: 4px solid #0088cc;
+}
+
+.toast-success {
+  border-left: 4px solid #00b300;
+}
+
+.toast-warning {
+  border-left: 4px solid #ffa500;
+}
+
+.toast-error {
+  border-left: 4px solid #dc3545;
+}
+
+/* Toast Content */
+.toast-content {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+}
+
+.toast-icon {
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.toast-info .toast-icon {
+  color: #0088cc;
+}
+
+.toast-success .toast-icon {
+  color: #00b300;
+}
+
+.toast-warning .toast-icon {
+  color: #ffa500;
+}
+
+.toast-error .toast-icon {
+  color: #dc3545;
+}
+
+.toast-message {
+  flex: 1;
+  color: #333;
+  font-size: 14px;
+  padding-right: 10px;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.toast-close:hover {
+  color: #333;
+}
+
+/* Progress Bar */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  transition: width 10ms linear;
+}
+
+.toast-info .toast-progress {
+  background-color: #0088cc;
+}
+
+.toast-success .toast-progress {
+  background-color: #00b300;
+}
+
+.toast-warning .toast-progress {
+  background-color: #ffa500;
+}
+
+.toast-error .toast-progress {
+  background-color: #dc3545;
+}
+
+/* Animations */
+.toast.show {
+  animation: toast-in 0.3s ease-out forwards;
+}
+
+.toast.hide {
+  animation: toast-out 0.3s ease-out forwards;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Left Side Animations */
+.toast-top-left .toast.show,
+.toast-bottom-left .toast.show {
+  animation: toast-in-left 0.3s ease-out forwards;
+}
+
+.toast-top-left .toast.hide,
+.toast-bottom-left .toast.hide {
+  animation: toast-out-left 0.3s ease-out forwards;
+}
+
+@keyframes toast-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Center Animations */
+.toast-top-center .toast.show,
+.toast-bottom-center .toast.show {
+  animation: toast-in-center 0.3s ease-out forwards;
+}
+
+.toast-top-center .toast.hide,
+.toast-bottom-center .toast.hide {
+  animation: toast-out-center 0.3s ease-out forwards;
+}
+
+@keyframes toast-in-center {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out-center {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .toast-container {
+    padding: 10px;
+    width: 100%;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: none;
+    width: 100%;
+  }
+
+  .toast-content {
+    padding: 10px 12px;
+  }
+
+  .toast-message {
+    font-size: 13px;
+  }
+
+  .toast-icon {
+    font-size: 18px;
+  }
+
+  .toast-close {
+    font-size: 14px;
+  }
+}

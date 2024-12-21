@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import Navbar from '../components/Navbar'; 
 import Hero from '../components/Hero';
 import Categories from "../components/Categories";
 import ProductsPage from './ProductsPage';
-// import Header from "../components/Layouts/Header";
-// import BestDeals from "../components/BestDeals";
-// import FeaturedProduct from '../components/FeaturedProduct/FeaturedProduct';
-
-
+import { getAllProducts } from '../redux/actions/product';
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Fetch products from API
+    dispatch(getAllProducts());
+  }, [dispatch]);
+
   return (
     <div>
-      {/* <Header activeHeading={1} /> */}
       <Navbar />
       <Hero />
       <Categories />
-      {/* <BestDeals /> */}
       <ProductsPage />
-      {/* <FeaturedProduct /> */}
-      
-      
     </div>
   )
 }

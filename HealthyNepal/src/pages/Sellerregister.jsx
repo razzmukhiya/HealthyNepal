@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react';
-import SellerSignup from "../components/SellerDashboard/Sellersignup";
+import SellerSignupForm from "../components/SellerDashboard/Sellersignup";
 import Navbar from '../components/Navbar';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-
-const sellerSignup = () => {
+const SellerRegisterPage = () => {
   const navigate = useNavigate();
-  const { isSeller,seller } = useSelector((state) => state.seller);
+  const { isAuthenticated } = useSelector((state) => state.seller);
 
   useEffect(() => {
-    if(isSeller === true){
-      navigate(`/sellerdashboard/${seller._id}`);
+    // If seller is already authenticated, redirect to dashboard
+    if (isAuthenticated) {
+      navigate('/seller/dashboard');
     }
-  }, [])
+  }, [isAuthenticated, navigate]);
   return (
     <div>
       <Navbar />
-      <SellerSignup />
+      <SellerSignupForm />
       
     </div>
   )
 }
 
-export default sellerSignup;
+export default SellerRegisterPage;

@@ -6,13 +6,13 @@ import Signup from "../components/Signup/Signup";
 
 const SignupPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if(isAuthenticated === true){
       navigate("/");
     }
-  }, [])
+  }, [isAuthenticated, navigate])
   return (
     <div>
       <Signup />

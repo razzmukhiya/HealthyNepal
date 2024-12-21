@@ -1,30 +1,36 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './Dashboard';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Sellerdashboard from './Sellerdashboard';
 import Orders from './Orders';
 import Products from './Products';
-import Profile from './Profile';
+import AddProducts from './AddProducts';
 import ChatSupports from './ChatSupports';
 import CustomerSupport from './CustomerSupport';
 import Setting from './Setting';
 import Withdrawl from './Withdrawl';
-import SellerProfile from './SellerProfile';
+import SellerProfile from './VendorSellerProfile';
+import Vendorsidebar from '../../components/SellerDashboard/Vendorsidebar';
+import ViewProduct from './ViewProduct';
+import EditProduct from './EditProduct';
+import DeleteProduct from './DeleteProduct';
+import '../../styles/dashboard.css';
 
 function VendorDashboard() {
+  const { isAuthenticated, seller } = useSelector((state) => state.seller);
+
+  if (!isAuthenticated || !seller) {
+    return <Navigate to="/sellerlogin" replace />;
+  }
+
   return (
-    <div className="vendor-dashboard-container">
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="products" element={<Products />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="chatsupport" element={<ChatSupports />} />
-        <Route path="customersupport" element={<CustomerSupport />} />
-        <Route path="setting" element={<Setting />} />
-        <Route path="withdrawl" element={<Withdrawl />} />
-        <Route path="sellerprofile" element={<SellerProfile />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+    <div className="vendor-dashboard">
+      <aside className="vendor-dashboard__sidebar">
+        <Vendorsidebar />
+      </aside>
+      <main className="vendor-dashboard__content">
+        <Outlet />
+      </main>
     </div>
   );
 }

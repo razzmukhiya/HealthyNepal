@@ -100,10 +100,10 @@ router.post(
       }
 
       //generate access and refresh token
-      const accessToken = jwt.sign({ id: user._id }, accessTokenSecret, {
+      const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
         expiresIn: "15m",
       });
-      const refreshToken = jwt.sign({ id: user._id }, refreshTokenSecret, {
+      const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
         expiresIn: "7d",
       });
 
@@ -161,13 +161,13 @@ router.post("/token", async (req, res) => {
   if (!storeToken) return res.status(401).json({ message: "Invalid refresh token" });
 
   // Verify the token
-  jwt.verify(token, refreshTokenSecret, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
     if (err) return res.status(403).json({ message: "Invalid refresh token" });
 
-    const newAccessToken = jwt.sign({ id: user.id }, accessTokenSecret, {
+    const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "15m",
     });
-    res.json({ accessToken: newAccessToken });
+    res.json({ success: true, accessToken: newAccessToken });
   });
 });
 

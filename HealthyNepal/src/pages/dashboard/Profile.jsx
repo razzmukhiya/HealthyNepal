@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Sidebar from '../../components/UserDashboard/Sidebar';
 import NavTop from '../../components/UserDashboard/NavTop';
 import "../../styles/Profile.css";
-import { loadSeller } from '../../redux/actions/user';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -28,10 +26,6 @@ const Profile = () => {
       setGender(user.gender || '');
     }
   }, [user]);
-
-  const handleLoadSeller = () => {
-    dispatch(loadSeller());
-  };
 
   return (
     <div>
@@ -116,7 +110,6 @@ const Profile = () => {
             <button className='btn' type='submit'>Submit</button>
           </div>
         </form>
-        <button onClick={handleLoadSeller}>Load Seller</button>
       </div>
     </div>
   )

@@ -1,37 +1,43 @@
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { server } from "../../../server";
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/actions/sellers';
 import { toast } from 'react-toastify';
 import "../../styles/Sellersign.css";
 
 const Sellersignin = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        `${server}/shop/login-shop`,
-        { email, password },
-        { withCredentials: true }
-      );
-      toast.success("Login Success!");
-      navigate("/sellerdashboard"); // Redirect to seller dashboard
+      await dispatch(login(email, password));
+      toast.success("Login successful!");
+      navigate("/seller/dashboard");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login Failed");
+      console.error('Login error:', error.response || error);
+      
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          "Login failed. Please try again.";
+      
+      dispatch({
+        type: 'LoadSellerFail',
+        payload: errorMessage
+      });
+      
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    window.location.href = "/login";
   };
 
   return (
@@ -51,6 +57,7 @@ const Sellersignin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className='form-input'
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -64,6 +71,7 @@ const Sellersignin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className='form-input'
+                disabled={isLoading}
               />
               {isPasswordVisible ? (
                 <AiOutlineEye
@@ -87,6 +95,7 @@ const Sellersignin = () => {
                 name='remember-me'
                 id='remember-me'
                 className='checkbox'
+                disabled={isLoading}
               />
               <label htmlFor="remember-me">Remember me</label>
             </div>
@@ -96,7 +105,13 @@ const Sellersignin = () => {
               </Link>
             </div>
           </div>
-          <button type='submit' className='submit-button'>Submit</button>
+          <button 
+            type='submit' 
+            className='submit-button'
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Submit'}
+          </button>
           <div className="signup-prompt">
             <h4>Don't have an account ?</h4>
             <Link to="/sellersignup" className='signup-link'>Sign Up</Link>

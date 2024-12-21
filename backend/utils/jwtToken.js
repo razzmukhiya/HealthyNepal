@@ -1,4 +1,16 @@
-// create token and saving that in cookies
+const jwt = require("jsonwebtoken");
+
+// Function to generate access token
+const generateAccessToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+};
+
+// Function to generate refresh token
+const generateRefreshToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+};
+
+// Create token and saving that in cookies
 const sendToken = (user, statusCode, res) => {
     const token = user.getJwtToken();
   
@@ -17,8 +29,8 @@ const sendToken = (user, statusCode, res) => {
       email: user.email,
       token,
     });
-  };
-  
-  module.exports = sendToken;
+};
+
+module.exports = { sendToken, generateAccessToken, generateRefreshToken };
 
 

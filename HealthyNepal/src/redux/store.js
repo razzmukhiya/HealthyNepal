@@ -1,14 +1,30 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { userReducer } from "./reducers/user";
-import { sellerReducer } from "./reducers/seller";
-import { productReducer } from "./reducers/product";
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './reducers/authSlice';
+import registerReducer from './reducers/registerSlice';
+import sellersReducer from './reducers/sellersSlice';
+import withdrawalsReducer from './reducers/withdrawalsSlice';
+import requestsReducer from './reducers/requestsSlice';
+import chatReducer from './reducers/chatSlice';
+import productReducer from './reducers/productSlice';
+import cartReducer from './reducers/cartSlice';
+import wishlistReducer from './reducers/wishlistSlice';
 
-const Store = configureStore({
+export const store = configureStore({
   reducer: {
-    user: userReducer,
-    seller: sellerReducer,
+    auth: authReducer,
+    register: registerReducer,
+    sellers: sellersReducer,
+    withdrawals: withdrawalsReducer,
+    requests: requestsReducer,
+    chat: chatReducer,
     product: productReducer,
+    cart: cartReducer,
+    wishlist: wishlistReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
-export default Store;
+export default store;

@@ -1,34 +1,59 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from './Dashboard';
-import Orders from "./Orders";
-import Address from "./Address";
-import WishList from "./WishList";
-import ChatSupport from "./ChatSupport";
-import Profile from "./Profile";
-import Sidebar from "../../components/UserDashboard/Sidebar";
+import { useSelector } from "react-redux";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import NavTop from "../../components/UserDashboard/NavTop";
+import Sidebar from "../../components/UserDashboard/Sidebar";
+import Dashboard from "./Dashboard";
+import Profile from "../../components/UserDashboard/Profile";
+import Address from "../../components/UserDashboard/Address";
+import Wishlist from "../../components/UserDashboard/Wishlist";
+import ChatSupport from "../../components/UserDashboard/ChatSupport";
+import "../../styles/UserDashboard.css";
 
-function UserDashboard() {
+const UserDashboard = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, user } = useSelector((state) => state.user);
+
+  React.useEffect(() => {
+    // Only redirect if we're sure the user isn't authenticated
+    if (!loading && !isAuthenticated && !localStorage.getItem('userAccessToken')) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, loading, navigate]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
   return (
-    <div className="user-dashboard-container">
-      <Sidebar />
-      <div className="dashboard-content">
+    <div className="dashboard-layout">
+      <div className="sidebar-container">
+        <Sidebar />
+      </div>
+      <div className="main-content">
         <NavTop />
-        <div className="dashboard-main">
+        <div className="content-area">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="address" element={<Address />} />
-            <Route path="wishlist" element={<WishList />} />
-            <Route path="chatsupport" element={<ChatSupport />} />
+            <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="address" element={<Address />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="chatsupport" element={<ChatSupport />} />
           </Routes>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default UserDashboard;
