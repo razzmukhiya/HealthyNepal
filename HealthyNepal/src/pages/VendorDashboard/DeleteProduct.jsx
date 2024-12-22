@@ -12,19 +12,15 @@ const DeleteProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`${server}/product/get-product/${id}`);
         setProduct(response.data.product);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching product:', error);
         toast.error('Error fetching product details');
-        setLoading(false);
       }
     };
     fetchProduct();
@@ -32,7 +28,6 @@ const DeleteProduct = () => {
 
   const handleDelete = async () => {
     try {
-      setDeleting(true);
       await axios.delete(`${server}/product/delete-product/${id}`, {
         withCredentials: true
       });
@@ -41,16 +36,11 @@ const DeleteProduct = () => {
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error('Error deleting product');
-      setDeleting(false);
     }
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
   if (!product) {
-    return <div className="error">Product not found</div>;
+    return null;
   }
 
   return (
@@ -94,17 +84,15 @@ const DeleteProduct = () => {
                 <button 
                   className="cancel-btn"
                   onClick={() => navigate('/seller/products')}
-                  disabled={deleting}
                 >
                   Cancel
                 </button>
                 <button 
                   className="delete-btn"
                   onClick={handleDelete}
-                  disabled={deleting}
                 >
                   <BsTrash size={18} />
-                  {deleting ? 'Deleting...' : 'Delete Product'}
+                  Delete Product
                 </button>
               </div>
             </div>

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAdmin, clearError } from '../../redux/reducers/authSlice';
+import { clearError } from '../../redux/reducers/authSlice';
+import { adminLogin } from '../../redux/actions/admin';
 import '../../styles/adminlogin.css';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -15,7 +16,7 @@ const AdminLogin = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.role === 'admin') {
       navigate('/admin/dashboard');
     }
   }, [isAuthenticated, navigate]);
@@ -23,7 +24,7 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(clearError());
-    dispatch(loginAdmin(formData));
+    dispatch(adminLogin(formData));
   };
 
   const handleChange = (e) => {

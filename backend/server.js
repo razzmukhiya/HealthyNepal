@@ -13,7 +13,18 @@ process.on("uncaughtException", (err) => {
 
 // Load environment variables
 if (process.env.NODE_ENV !== "PRODUCTION") {
-    require("dotenv").config({ path: "backend/config/.env" });
+    try {
+        require("dotenv").config({ path: "backend/config/.env" });
+        console.log('Environment variables loaded');
+        console.log('Environment:', {
+            NODE_ENV: process.env.NODE_ENV,
+            PORT: process.env.PORT,
+            DB_URL: process.env.DB_URL ? 'DB_URL exists' : 'DB_URL missing'
+        });
+    } catch (error) {
+        console.error('Error loading environment variables:', error);
+        process.exit(1);
+    }
 }
 
 // Create uploads directory if it doesn't exist

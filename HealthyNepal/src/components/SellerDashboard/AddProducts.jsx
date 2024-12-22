@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createProduct } from '../../redux/actions/product';
+import { createProduct, getAllProductsShop } from '../../redux/actions/product';
 import Vendorsidebar from "./Vendorsidebar";
 import Vendornavtop from './Vendornavtop';
 import { toast } from 'react-toastify';
 
 const AddProducts = () => {
-  const { seller } = useSelector((state) => state.seller);
-  const { success, error } = useSelector((state) => state.products);
+  const { seller } = useSelector((state) => state.sellers);
+  const { isLoading, error } = useSelector((state) => state.product);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -84,7 +85,17 @@ const AddProducts = () => {
       newForm.append("images", image);
     });
     
-    dispatch(createProduct(newForm));
+    dispatch(createProduct(newForm))
+      .then(() => {
+        setSuccess(true);
+        // Fetch updated products list
+        if (seller?._id) {
+          dispatch(getAllProductsShop(seller._id));
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message || "Failed to create product");
+      });
   };
 
   useEffect(() => {

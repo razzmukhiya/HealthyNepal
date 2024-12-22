@@ -1,25 +1,16 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import Navbar from '../components/Navbar'; 
 import Hero from '../components/Hero';
 import Categories from "../components/Categories";
-import ProductsPage from './ProductsPage';
-import { getAllProducts } from '../redux/actions/product';
+import HomeProducts from '../components/HomeProducts';
 
 const Home = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Fetch products from API
-    dispatch(getAllProducts());
-  }, [dispatch]);
-
   return (
     <div>
       <Navbar />
       <Hero />
       <Categories />
-      <ProductsPage />
+      <HomeProducts />
     </div>
   )
 }

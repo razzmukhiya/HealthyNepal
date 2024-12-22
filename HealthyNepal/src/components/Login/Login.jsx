@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import "../../styles/login.css";
-import api, { endpoints } from "../../utils/api";
+import { apiMethods, endpoints } from "../../utils/api";
 import { loadUser } from "../../redux/actions/user";
-import { login, loadUserRequest, loadUserFail } from "../../redux/reducers/authSlice";
+import { login, loadUserRequest, loadUserSuccess, loadUserFail } from "../../redux/reducers/authSlice";
 import { toast } from "react-toastify";
 
 const Login = () => {
@@ -25,16 +25,18 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await api.post(
+      dispatch(loadUserRequest());
+      
+      const { data, error } = await apiMethods.post(
         endpoints.auth.login,
         { email, password }
       );
 
-      if (response.error) {
-        throw new Error(response.message);
+      if (error || !data.success) {
+        throw new Error(error?.message || data?.message || "Login failed");
       }
 
-      const { success, user, accessToken, refreshToken } = response.data;
+      const { success, user, accessToken, refreshToken } = data;
 
       if (!success) {
         throw new Error("Login failed");
@@ -44,16 +46,23 @@ const Login = () => {
       localStorage.setItem("userAccessToken", accessToken);
       localStorage.setItem("userRefreshToken", refreshToken);
 
-      // Dispatch login action with user data
+      // Dispatch login action
       dispatch(login(user));
-      
-      // Load user data after successful login
-      dispatch(loadUser());
+
+      // Load user data and wait for it to complete
+      await dispatch(loadUser());
       
       toast.success("Login Success!");
       
-      // Navigate to the attempted URL or home
-      navigate(from, { replace: true });
+      // Navigate based on user role
+      setTimeout(() => {
+        if (user.role === 'seller') {
+          navigate('/seller/dashboard', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
+      }, 100); // Small delay to ensure state updates are processed
+      
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || "An unexpected error occurred";
       setError(errorMessage);

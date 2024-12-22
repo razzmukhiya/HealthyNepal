@@ -1,10 +1,20 @@
 import axios from "axios";
 import { server } from "../../utils/api";
+import { refreshSellerToken } from "../../utils/refreshToken";
+import {
+    LoadSellerRequest,
+    LoadSellerSuccess,
+    LoadSellerFail,
+    SellerLogout,
+    UpdateSellerInfoRequest,
+    UpdateSellerInfoSuccess,
+    UpdateSellerInfoFail
+} from '../reducers/sellersSlice';
 
 // Login seller
 export const login = (email, password) => async (dispatch) => {
     try {
-        dispatch({ type: 'LoadSellerRequest' });
+        dispatch(LoadSellerRequest());
         
         const { data } = await axios.post(
             `${server}/shop/login-shop`,
@@ -18,25 +28,32 @@ export const login = (email, password) => async (dispatch) => {
             }
         );
         
-        if (!data.success || !data.accessToken || !data.refreshToken || !data.user) {
-            throw new Error('Invalid response from server');
+        if (!data.success) {
+            throw new Error(data.message || 'Login failed');
+        }
+        
+        if (!data.accessToken || !data.refreshToken) {
+            throw new Error('Missing authentication tokens');
         }
         
         // Store tokens in localStorage
         localStorage.setItem("sellerAccessToken", data.accessToken);
+        localStorage.removeItem("userAccessToken"); // Ensure user is logged out
         localStorage.setItem("sellerRefreshToken", data.refreshToken);
-        
-        dispatch({
-            type: 'SellerLoginSuccess',
-            payload: { user: data.user }
-        });
 
-        return data;
+        // Get the seller data from the response
+        const sellerData = data.seller || data.user;
+        if (!sellerData) {
+            throw new Error('Missing seller data');
+        }
+        
+        // Dispatch login success with the seller data
+        dispatch(LoadSellerSuccess(sellerData));
+        return { ...data, success: true };
     } catch (error) {
-        dispatch({
-            type: 'LoadSellerFail',
-            payload: error.response?.data?.message || 'Login failed'
-        });
+        console.error('Login error:', error);
+        const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+        dispatch(LoadSellerFail(errorMessage));
         throw error;
     }
 };
@@ -44,135 +61,173 @@ export const login = (email, password) => async (dispatch) => {
 // Load seller data
 export const loadSeller = () => async (dispatch) => {
     try {
-        dispatch({ type: 'LoadSellerRequest' });
-
-        const token = localStorage.getItem("sellerAccessToken");
-        if (!token) {
-            const error = new Error('No authentication token found');
-            dispatch({
-                type: 'LoadSellerFail',
-                payload: error.message
-            });
-            throw error;
-        }
-
-        const { data } = await axios.get(`${server}/shop/getSeller`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            withCredentials: true,
-        });
-
-        if (!data.success || !data.seller) {
-            const error = new Error('Invalid seller data received');
-            dispatch({
-                type: 'LoadSellerFail',
-                payload: error.message
-            });
-            throw error;
-        }
-
-        dispatch({
-            type: 'LoadSellerSuccess',
-            payload: data.seller
-        });
-
-        return data;
-    } catch (error) {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("sellerAccessToken");
-            localStorage.removeItem("sellerRefreshToken");
-        }
+        let token = localStorage.getItem("sellerAccessToken");
+        const refreshToken = localStorage.getItem("sellerRefreshToken");
         
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to load seller data';
-        dispatch({
-            type: 'LoadSellerFail',
-            payload: errorMessage
-        });
-        
-        throw error;
-    }
-};
-
-// Update seller information
-export const updateSellerInfo = (formData) => async (dispatch) => {
-    try {
-        dispatch({ type: 'UpdateSellerInfoRequest' });
-
-        const token = localStorage.getItem("sellerAccessToken");
-        if (!token) {
-            const error = new Error('No authentication token found');
-            dispatch({
-                type: 'UpdateSellerInfoFail',
-                payload: error.message
-            });
-            throw error;
+        // If no tokens at all, clear state and return
+        if (!token && !refreshToken) {
+            dispatch(SellerLogout());
+            return;
         }
 
-        const { data } = await axios.put(
-            `${server}/shop/update-seller-info`,
-            formData,
-            {
+        dispatch(LoadSellerRequest());
+
+        // If no access token but have refresh token, try to refresh first
+        if (!token && refreshToken) {
+            try {
+                token = await refreshSellerToken();
+            } catch (refreshError) {
+                localStorage.removeItem("sellerAccessToken");
+                localStorage.removeItem("sellerRefreshToken");
+                dispatch(SellerLogout());
+                return;
+            }
+        }
+
+        try {
+            const { data } = await axios.get(`${server}/shop/getSeller`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                withCredentials: true,
-            }
-        );
-
-        if (!data.success || !data.seller) {
-            const error = new Error('Invalid response from server');
-            dispatch({
-                type: 'UpdateSellerInfoFail',
-                payload: error.message
+                withCredentials: true
             });
+
+            if (!data.success || !data.seller) {
+                throw new Error(data.message || 'Failed to load seller data');
+            }
+
+            dispatch(LoadSellerSuccess(data.seller));
+            return data;
+        } catch (error) {
+            // If token expired (401), try to refresh it
+            if (error.response?.status === 401 && refreshToken) {
+                try {
+                    // Get new access token
+                    token = await refreshSellerToken();
+                    
+                    // Retry the request with new token
+                    const { data } = await axios.get(`${server}/shop/getSeller`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        withCredentials: true
+                    });
+
+                    if (!data.success || !data.seller) {
+                        throw new Error(data.message || 'Failed to load seller data');
+                    }
+
+                    dispatch(LoadSellerSuccess(data.seller));
+                    return data;
+                } catch (refreshError) {
+                    // If refresh fails, logout
+                    localStorage.removeItem("sellerAccessToken");
+                    localStorage.removeItem("sellerRefreshToken");
+                    dispatch(SellerLogout());
+                    throw refreshError;
+                }
+            }
             throw error;
         }
-
-        dispatch({
-            type: 'UpdateSellerInfoSuccess',
-            payload: data.seller
-        });
-
-        return data;
     } catch (error) {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("sellerAccessToken");
-            localStorage.removeItem("sellerRefreshToken");
+        console.error('Load seller error:', error);
+        localStorage.removeItem("sellerAccessToken");
+        localStorage.removeItem("sellerRefreshToken");
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to load seller data';
+        dispatch(LoadSellerFail(errorMessage));
+        dispatch(SellerLogout());
+    }
+};
+
+// Update seller info
+export const updateSellerInfo = (formData) => async (dispatch) => {
+    try {
+        let token = localStorage.getItem("sellerAccessToken");
+        if (!token) {
+            throw new Error('No authentication token found');
         }
 
+        dispatch(UpdateSellerInfoRequest());
+
+        try {
+            const { data } = await axios.put(
+                `${server}/shop/update-seller`,
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    withCredentials: true
+                }
+            );
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to update seller information');
+            }
+
+            dispatch(UpdateSellerInfoSuccess(data.seller));
+            return data;
+        } catch (error) {
+            // If token expired (401), try to refresh it
+            if (error.response?.status === 401) {
+                try {
+                    // Get new access token
+                    token = await refreshSellerToken();
+                    
+                    // Retry the request with new token
+                    const { data } = await axios.put(
+                        `${server}/shop/update-seller`,
+                        formData,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'multipart/form-data'
+                            },
+                            withCredentials: true
+                        }
+                    );
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to update seller information');
+                    }
+
+                    dispatch(UpdateSellerInfoSuccess(data.seller));
+                    return data;
+                } catch (refreshError) {
+                    // If refresh fails, logout
+                    localStorage.removeItem("sellerAccessToken");
+                    localStorage.removeItem("sellerRefreshToken");
+                    dispatch(SellerLogout());
+                    throw refreshError;
+                }
+            }
+            throw error;
+        }
+    } catch (error) {
+        console.error('Update seller error:', error);
         const errorMessage = error.response?.data?.message || error.message || 'Failed to update seller information';
-        dispatch({
-            type: 'UpdateSellerInfoFail',
-            payload: errorMessage
-        });
+        dispatch(UpdateSellerInfoFail(errorMessage));
         throw error;
     }
 };
 
 // Logout seller
-export const logout = () => async (dispatch) => {
+export const logout = () => (dispatch) => {
     try {
-        dispatch({ type: 'LoadSellerRequest' });
-        
         // Remove tokens from localStorage
         localStorage.removeItem("sellerAccessToken");
         localStorage.removeItem("sellerRefreshToken");
         
         // Clear seller state
-        dispatch({ type: 'SellerLogout' });
-        
-        // Redirect to login page
-        window.location.href = '/sellerlogin';
+        dispatch(SellerLogout());
     } catch (error) {
-        dispatch({
-            type: 'LoadSellerFail',
-            payload: error.response?.data?.message || error.message || 'Logout failed'
-        });
-        throw error;
+        console.error('Logout error:', error);
+        const errorMessage = error.response?.data?.message || error.message || 'Logout failed';
+        dispatch(LoadSellerFail(errorMessage));
     }
 };

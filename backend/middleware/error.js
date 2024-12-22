@@ -1,22 +1,16 @@
 const ErrorHandler = require("../utils/ErrorHandler");
-const logError = require("../utils/logger");
+const { logger, logError } = require("../utils/logger");
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "Internal server Error";
 
-  // Log error with our logging utility and console
-  const errorDetails = {
-    statusCode: err.statusCode,
-    message: err.message,
+  // Log error with our logging utility
+  logError(err, {
     path: req.originalUrl,
     method: req.method,
-    timestamp: new Date().toISOString(),
-    stack: err.stack
-  };
-  
-  console.error('Error details:', errorDetails);
-  logError(JSON.stringify(errorDetails, null, 2));
+    timestamp: new Date().toISOString()
+  });
 
   // Multer file size error
   if (err.code === 'LIMIT_FILE_SIZE') {
@@ -72,9 +66,15 @@ module.exports = (err, req, res, next) => {
     });
   }
 
-  res.status(err.statusCode).json({
+  const response = {
     success: false,
     message: err.message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(err.data && { data: err.data })
+  };
+
+  // Log the error response
+  logger.error('Error response:', response);
+
+  res.status(err.statusCode).json(response);
 };

@@ -5,6 +5,30 @@ import Rating from './Rating';
 import '../styles/ProductDetailsCard.css';
 
 const ProductDetailsCard = ({ setOpen, data }) => {
+  const getImageUrl = (imageData) => {
+    if (!imageData || !Array.isArray(imageData) || imageData.length === 0) {
+      return "https://via.placeholder.com/400x400?text=Product+Image";
+    }
+
+    const firstImage = imageData[0];
+    if (!firstImage.url) {
+      return "https://via.placeholder.com/400x400?text=Product+Image";
+    }
+
+    // If it's already a full URL, return it
+    if (firstImage.url.startsWith('http')) {
+      return firstImage.url;
+    }
+
+    // If it's a relative path starting with /uploads, use it directly
+    if (firstImage.url.startsWith('/uploads')) {
+      return firstImage.url;
+    }
+
+    // If it's just a filename, add /uploads prefix
+    return `/uploads/${firstImage.url}`;
+  };
+
   return (
     <div className="product-details-card">
       <div className="product-details-overlay" onClick={() => setOpen(false)} />
@@ -21,9 +45,10 @@ const ProductDetailsCard = ({ setOpen, data }) => {
         <div className="product-details-body">
           <div className="product-details-image">
             <img
-              src={data?.images?.[0]?.url || "https://via.placeholder.com/400x400?text=Product+Image"}
+              src={getImageUrl(data?.images)}
               alt={data?.name}
               onError={(e) => {
+                console.log('Image load error:', e.target.src);
                 e.target.onerror = null;
                 e.target.src = "https://via.placeholder.com/400x400?text=Product+Image";
               }}

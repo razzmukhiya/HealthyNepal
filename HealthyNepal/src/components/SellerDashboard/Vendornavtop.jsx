@@ -1,18 +1,13 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { loadSeller } from "../../redux/actions/sellers";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { FiSearch, FiBell, FiMail } from 'react-icons/fi';
 import { RxAvatar } from "react-icons/rx";
 import { server } from "../../utils/api";
 import "../../styles/Vendornavtop.css";
 
 const Vendornavtop = () => {
-  const dispatch = useDispatch();
-  const { seller } = useSelector((state) => state.seller);
-  
-  useEffect(() => {
-    dispatch(loadSeller());
-  }, [dispatch]);
+  const { seller, loading } = useSelector((state) => state.sellers);
 
   return (
     <div className="navtop">
@@ -25,23 +20,24 @@ const Vendornavtop = () => {
             type="text" 
             className="search-input"
             autoComplete="off"
+            placeholder="Search..."
           />
         </div>
       </div>
 
       <div className="navtop__right">
         <div className="notification-icons">
-          <button className="icon-btn" title="Notifications">
+          <Link to="/seller/notifications" className="icon-btn" title="Notifications">
             <FiBell size={20} />
             <span className="badge">2</span>
-          </button>
-          <button className="icon-btn" title="Messages">
+          </Link>
+          <Link to="/seller/messages" className="icon-btn" title="Messages">
             <FiMail size={20} />
             <span className="badge">3</span>
-          </button>
+          </Link>
         </div>
 
-        <div className="profile">
+        <Link to="/seller/profile" className="profile">
           <div className="profile__info">
             <span className="profile__name">{seller?.name || 'Seller'}</span>
             <span className="profile__role">Seller</span>
@@ -62,7 +58,7 @@ const Vendornavtop = () => {
               <RxAvatar size={24} />
             )}
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );

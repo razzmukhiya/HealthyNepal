@@ -136,6 +136,27 @@
 }
 
 /* Responsive Design */
+.avatar-preview {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.avatar-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00b300;
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
 @media (max-width: 480px) {
   .login-form {
     padding: 30px 20px;

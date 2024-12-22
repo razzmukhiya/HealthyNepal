@@ -14,7 +14,7 @@ const DashboardCard = ({ title, value, icon, link }) => (
 );
 
 const Dashboard = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
   // These would typically come from Redux state
   const orderCount = 0;
   const wishlistCount = 0;

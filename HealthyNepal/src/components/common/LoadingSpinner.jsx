@@ -1,20 +1,9 @@
 import React from 'react';
-import '../../styles/loadingspinner.css';
 
-const LoadingSpinner = ({ size = 'medium', color = 'primary', fullScreen = false }) => {
-  const spinnerClasses = [
-    'loading-spinner',
-    `spinner-${size}`,
-    `spinner-${color}`,
-    fullScreen ? 'spinner-fullscreen' : ''
-  ].join(' ');
-
+const LoadingSpinner = () => {
   return (
-    <div className={spinnerClasses}>
-      <div className="spinner-container">
-        <div className="spinner"></div>
-        <p className="spinner-text">Loading...</p>
-      </div>
+    <div className="loading-container">
+      <div className="loading-spinner-light"></div>
     </div>
   );
 };

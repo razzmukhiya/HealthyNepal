@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import Rating from '../components/Rating';
+import api from '../utils/api';
 import '../styles/ProductDetails.css';
+
+// Simple cache implementation
+const cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -14,26 +19,48 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch product details when component mounts
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-const response = await fetch(`/api/v2/get-product/${id}`);
-        const data = await response.json();
-        if (data.success) {
-          setProduct(data.product);
-        }
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        toast.error('Error loading product details');
+  // Fetch product with caching
+  const fetchProduct = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Check cache first
+      const cachedData = cache.get(id);
+      if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
+        setProduct(cachedData.data);
+        setLoading(false);
+        return;
       }
-    };
-    
-    fetchProduct();
+
+      const response = await api.get(`/product/get-product/${id}`);
+      if (response.data?.success) {
+        // Update cache
+        cache.set(id, {
+          data: response.data.product,
+          timestamp: Date.now()
+        });
+        setProduct(response.data.product);
+      } else {
+        throw new Error(response.data?.message || 'Error loading product details');
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      setError(error.message || 'Error loading product details');
+      toast.error(error.message || 'Error loading product details');
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  const handleAddToCart = () => {
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
+
+  const handleAddToCart = useCallback(() => {
     if (!product.stock) {
       toast.error('Product is out of stock!');
       return;
@@ -42,15 +69,15 @@ const response = await fetch(`/api/v2/get-product/${id}`);
     const cartData = { ...product, qty: 1 };
     dispatch({ type: 'ADD_TO_CART', payload: cartData });
     toast.success('Added to cart successfully!');
-  };
+  }, [product, dispatch]);
 
-  const handleBuyNow = () => {
+  const handleBuyNow = useCallback(() => {
     handleAddToCart();
     navigate('/cart');
-  };
+  }, [handleAddToCart, navigate]);
 
-  const toggleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
+  const toggleWishlist = useCallback(() => {
+    setIsWishlisted(prev => !prev);
     if (!isWishlisted) {
       dispatch({ type: 'ADD_TO_WISHLIST', payload: product });
       toast.success('Added to wishlist!');
@@ -58,10 +85,39 @@ const response = await fetch(`/api/v2/get-product/${id}`);
       dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: product._id });
       toast.success('Removed from wishlist!');
     }
-  };
+  }, [isWishlisted, product, dispatch]);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading product details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error Loading Product</h2>
+        <p>{error}</p>
+        <button onClick={fetchProduct} className="retry-button">
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   if (!product) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="not-found-container">
+        <h2>Product Not Found</h2>
+        <p>The product you're looking for doesn't exist or has been removed.</p>
+        <button onClick={() => navigate('/products')} className="back-button">
+          Back to Products
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -71,12 +127,11 @@ const response = await fetch(`/api/v2/get-product/${id}`);
           <div className="main-image">
             <img 
               src={Array.isArray(product.images) 
-                ? product.images[selectedImage].url.startsWith('http')
-                  ? product.images[selectedImage].url
-                  : `/uploads/${product.images[selectedImage].url}`
+                ? product.images[selectedImage].url
                 : product.images?.url || "https://via.placeholder.com/400x400?text=Product+Image"
               } 
               alt={product.name}
+              loading="lazy"
             />
           </div>
           <div className="image-list">
@@ -87,8 +142,9 @@ const response = await fetch(`/api/v2/get-product/${id}`);
                 onClick={() => setSelectedImage(index)}
               >
                 <img 
-                  src={image.url.startsWith('http') ? image.url : `/uploads/${image.url}`}
+                  src={image.url}
                   alt={`${product.name} - ${index + 1}`}
+                  loading="lazy"
                 />
               </div>
             ))}
@@ -108,6 +164,11 @@ const response = await fetch(`/api/v2/get-product/${id}`);
           <h2 className="discount-price">${product.discountPrice}</h2>
           {product.originalPrice > product.discountPrice && (
             <span className="original-price">${product.originalPrice}</span>
+          )}
+          {product.originalPrice > product.discountPrice && (
+            <span className="discount-percentage">
+              {Math.round(((product.originalPrice - product.discountPrice) / product.originalPrice) * 100)}% OFF
+            </span>
           )}
         </div>
 
@@ -182,4 +243,4 @@ const response = await fetch(`/api/v2/get-product/${id}`);
   );
 };
 
-export default ProductDetails;
+export default React.memo(ProductDetails);

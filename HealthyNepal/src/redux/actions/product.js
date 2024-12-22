@@ -1,31 +1,44 @@
-import axios from "axios";
-import { setProducts, setLoading, setError } from '../reducers/productSlice';
-import { server } from "../../utils/api";
-
-// Create a separate axios instance for public routes
-const publicAxios = axios.create({
-  baseURL: server,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+import { setProducts, setLoading, setError, appendProducts, setHasMore, setCurrentPage } from '../reducers/productSlice';
+import api from '../../utils/api';
 
 // get all products (public route)
-export const getAllProducts = () => async (dispatch) => {
+export const getAllProducts = (page = 1, isFirstLoad = true) => async (dispatch) => {
   try {
-    console.log('Fetching products...');
+    console.log('Fetching products - Page:', page, 'IsFirstLoad:', isFirstLoad);
     dispatch(setLoading(true));
-
-    // Use publicAxios for public routes
-    const response = await publicAxios.get('/product/get-all-products');
+    dispatch(setError(null)); // Clear any previous errors
     
-    console.log('Received products response:', response);
-    dispatch(setProducts(response.data.products || []));
+    console.log('Making API request to:', `/product/get-all-products?page=${page}&limit=12`);
+    const response = await api.get(`/product/get-all-products?page=${page}&limit=12`);
+    console.log('API Response:', response);
+    
+    if (!response.data || !response.data.success) {
+      console.error('API Error:', response.data);
+      throw new Error(response.data?.message || "Failed to fetch products");
+    }
+
+    const { products, currentPage, totalPages } = response.data;
+    console.log('Received products:', products?.length, 'Current Page:', currentPage, 'Total Pages:', totalPages);
+    
+    if (isFirstLoad) {
+      console.log('Setting initial products');
+      dispatch(setProducts(products || []));
+    } else {
+      console.log('Appending products');
+      dispatch(appendProducts(products || []));
+    }
+    
+    dispatch(setCurrentPage(currentPage));
+    dispatch(setHasMore(currentPage < totalPages));
+    
   } catch (error) {
     console.error('Error fetching products:', error);
-    console.error('Error response:', error.response?.data);
-    dispatch(setProducts([]));
-    dispatch(setError(error.response?.data?.message || "Failed to fetch products"));
+    dispatch(setProducts([])); // Clear products on error
+    dispatch(setError(
+      error.response?.data?.message || 
+      error.message || 
+      "Failed to fetch products"
+    ));
   } finally {
     dispatch(setLoading(false));
   }
@@ -36,12 +49,19 @@ export const getProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
 
-    // Use publicAxios for public routes
-    const response = await publicAxios.get(`/product/get-product/${id}`);
+    const response = await api.get(`/product/get-product/${id}`);
+    
+    if (!response.data || !response.data.success) {
+      throw new Error(response.data?.message || "Failed to fetch product");
+    }
 
     dispatch(setProducts([response.data.product]));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || "Failed to fetch product"));
+    dispatch(setError(
+      error.response?.data?.message || 
+      error.message || 
+      "Failed to fetch product"
+    ));
   } finally {
     dispatch(setLoading(false));
   }
@@ -52,25 +72,25 @@ export const createProduct = (formData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
 
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('Authentication required');
+    const response = await api.post('/product/create-product', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (!response.data || !response.data.success) {
+      throw new Error(response.data?.message || "Failed to create product");
     }
 
-    const response = await axios.post(
-      `${server}/product/create-product`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    dispatch(setProducts([response.data.product]));
+    // After successful creation, fetch updated products list for the shop
+    const shopId = response.data.product.shop;
+    dispatch(getAllProductsShop(shopId));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || "Failed to create product"));
+    dispatch(setError(
+      error.response?.data?.message || 
+      error.message || 
+      "Failed to create product"
+    ));
   } finally {
     dispatch(setLoading(false));
   }
@@ -81,23 +101,21 @@ export const getAllProductsShop = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
 
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('Authentication required');
-    }
+    const response = await api.get(`/product/get-all-products-shop/${id}`);
 
-    const response = await axios.get(
-      `${server}/product/get-all-products-shop/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
+    if (!response.data || !response.data.success) {
+      throw new Error(response.data?.message || "Failed to fetch shop products");
+    }
     
     dispatch(setProducts(response.data.products || []));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || "Failed to fetch shop products"));
+    console.error('Error fetching shop products:', error);
+    dispatch(setProducts([]));
+    dispatch(setError(
+      error.response?.data?.message || 
+      error.message || 
+      "Failed to fetch shop products"
+    ));
   } finally {
     dispatch(setLoading(false));
   }
@@ -108,24 +126,21 @@ export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
 
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('Authentication required');
+    const response = await api.delete(`/product/delete-shop-product/${id}`);
+
+    if (!response.data || !response.data.success) {
+      throw new Error(response.data?.message || "Failed to delete product");
     }
 
-    await axios.delete(
-      `${server}/product/delete-shop-product/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    // After successful deletion, fetch updated products list
-    dispatch(getAllProducts());
+    // After successful deletion, fetch updated products list for the shop
+    const shopId = response.data.product.shop;
+    dispatch(getAllProductsShop(shopId));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || "Failed to delete product"));
+    dispatch(setError(
+      error.response?.data?.message || 
+      error.message || 
+      "Failed to delete product"
+    ));
   } finally {
     dispatch(setLoading(false));
   }

@@ -10,7 +10,6 @@ import "../../styles/EditProduct.css";
 const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -37,11 +36,9 @@ const EditProduct = () => {
           stock: product.stock,
           images: product.images
         });
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching product:', error);
         toast.error('Error fetching product details');
-        setLoading(false);
       }
     };
     fetchProduct();
@@ -55,10 +52,8 @@ const EditProduct = () => {
     }));
   };
 
-  // Store object URLs for File objects
   const [imageUrls, setImageUrls] = useState({});
 
-  // Create and store URLs for new File objects
   useEffect(() => {
     const newUrls = {};
     formData.images.forEach((image, index) => {
@@ -71,7 +66,6 @@ const EditProduct = () => {
     }
   }, [formData.images]);
 
-  // Cleanup object URLs when component unmounts
   useEffect(() => {
     return () => {
       Object.values(imageUrls).forEach(url => {
@@ -94,7 +88,6 @@ const EditProduct = () => {
       images: prev.images.filter((_, i) => i !== index)
     }));
     
-    // If there was an object URL for this image, revoke it
     if (imageUrls[index]) {
       URL.revokeObjectURL(imageUrls[index]);
       setImageUrls(prev => {
@@ -113,9 +106,6 @@ const EditProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      
-      // Create FormData object
       const productData = new FormData();
       productData.append('name', formData.name);
       productData.append('description', formData.description);
@@ -125,21 +115,19 @@ const EditProduct = () => {
       productData.append('discountPrice', formData.discountPrice);
       productData.append('stock', formData.stock);
 
-      // Handle both existing and new images
       const existingImages = formData.images
         .filter(image => !(image instanceof File))
         .map(image => image.url);
       
       productData.append('existingImages', JSON.stringify(existingImages));
 
-      // Append new images
       formData.images
         .filter(image => image instanceof File)
         .forEach(image => {
           productData.append('images', image);
         });
 
-      const response = await axios.put(
+      await axios.put(
         `${server}/product/update-product/${id}`,
         productData,
         { 
@@ -155,13 +143,11 @@ const EditProduct = () => {
     } catch (error) {
       console.error('Error updating product:', error);
       toast.error(error.response?.data?.message || 'Error updating product');
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
+  if (!formData.name) {
+    return null;
   }
 
   return (
@@ -295,8 +281,8 @@ const EditProduct = () => {
                 <button type="button" onClick={() => navigate('/seller/products')} className="cancel-btn">
                   Cancel
                 </button>
-                <button type="submit" className="save-btn" disabled={loading}>
-                  {loading ? 'Saving...' : 'Save Changes'}
+                <button type="submit" className="save-btn">
+                  Save Changes
                 </button>
               </div>
             </form>

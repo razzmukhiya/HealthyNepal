@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SellerRegisterPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.seller);
+  const { isAuthenticated } = useSelector((state) => state.sellers);
 
   useEffect(() => {
     // If seller is already authenticated, redirect to dashboard

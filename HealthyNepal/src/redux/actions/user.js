@@ -1,24 +1,24 @@
 import { loadUserRequest, loadUserSuccess, loadUserFail } from '../reducers/authSlice';
-import api from '../../utils/api';
+import { apiMethods } from '../../utils/api';
 
 // load user
 export const loadUser = () => async (dispatch) => {
   try {
+    dispatch(loadUserRequest());
+    
     const token = localStorage.getItem('userAccessToken');
     if (!token) {
-      // If no token, user is not logged in - this is a normal state
+      dispatch(loadUserFail("No authentication token found"));
       return;
     }
 
-    dispatch(loadUserRequest());
-
-    const response = await api.get('/user/getuser');
+    const { data, error } = await apiMethods.get('/user/getuser');
     
-    if (response.error) {
-      throw new Error(response.message);
+    if (error) {
+      throw new Error(error.message);
     }
 
-    const { success, user } = response.data;
+    const { success, user } = data;
     
     if (!success) {
       throw new Error("Failed to load user data");
@@ -48,13 +48,13 @@ export const updateProfile = (userData) => async (dispatch) => {
       return;
     }
 
-    const response = await api.put('/user/update-profile', userData);
+    const { data, error } = await apiMethods.put('/user/update-profile', userData);
 
-    if (response.error) {
-      throw new Error(response.message);
+    if (error) {
+      throw new Error(error.message);
     }
 
-    const { success, user } = response.data;
+    const { success, user } = data;
 
     if (!success) {
       throw new Error("Failed to update profile");

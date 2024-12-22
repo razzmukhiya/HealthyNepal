@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import "../../styles/NavTopStyles.css";
 
 const NavTop = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <div className="navtop">

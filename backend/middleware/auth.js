@@ -1,7 +1,8 @@
- const ErrorHandler = require("../utils/ErrorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("./catchAsyncError");
 const jwt = require("jsonwebtoken");
 const Shop = require("../model/shop");
+const User = require("../model/user");
 
 // List of public routes that don't require authentication
 const publicRoutes = [
@@ -11,7 +12,8 @@ const publicRoutes = [
     '/user/signup',
     '/user/token',
     '/shop/login-shop',
-    '/shop/create-shop'
+    '/shop/create-shop',
+    '/admin/login'
 ];
 
 // Helper function to check if a route is public
@@ -46,13 +48,22 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         
-        // Check if this is a seller token
+        // Check user role
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Check if this is a seller
         const seller = await Shop.findById(decoded.id);
         if (seller) {
             req.user = { id: decoded.id, role: 'seller' };
         } else {
-            // If not a seller, treat as regular user
-            req.user = { id: decoded.id, role: 'user' };
+            // Set user with their actual role (user/admin)
+            req.user = { id: decoded.id, role: user.role };
         }
         next();
     } catch (error) {
@@ -72,6 +83,16 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
             message: "Authentication failed"
         });
     }
+});
+
+exports.isAdmin = catchAsyncErrors(async (req, res, next) => {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({
+            success: false,
+            message: "Access denied. Admin only."
+        });
+    }
+    next();
 });
 
 exports.isSeller = catchAsyncErrors(async (req, res, next) => {

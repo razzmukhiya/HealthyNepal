@@ -9,7 +9,7 @@ import '../../styles/SellerProfile.css';
 const SellerProfile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { seller, error, isLoading, isAuthenticated } = useSelector((state) => state.seller);
+    const { seller, error, isLoading, isAuthenticated } = useSelector((state) => state.sellers);
     const [formData, setFormData] = useState({
         name: '',
         email: '',

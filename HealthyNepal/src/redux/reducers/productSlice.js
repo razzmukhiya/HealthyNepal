@@ -1,40 +1,53 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isLoading: true,
   allProducts: [],
+  isLoading: false,
   error: null,
+  currentPage: 1,
+  hasMore: true
 };
 
 const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    setLoading: (state, action) => {
-      state.isLoading = action.payload;
-      // Clear error when loading starts
-      if (action.payload === true) {
-        state.error = null;
-      }
-    },
     setProducts: (state, action) => {
+      console.log('setProducts reducer called with:', action.payload);
       state.allProducts = action.payload;
-      state.isLoading = false;
-      state.error = null;
+      console.log('New state after setProducts:', state.allProducts);
+    },
+    appendProducts: (state, action) => {
+      console.log('appendProducts reducer called with:', action.payload);
+      state.allProducts = [...state.allProducts, ...action.payload];
+      console.log('New state after appendProducts:', state.allProducts);
+    },
+    setLoading: (state, action) => {
+      console.log('setLoading reducer called with:', action.payload);
+      state.isLoading = action.payload;
     },
     setError: (state, action) => {
-      // Don't set error state for authentication errors on public routes
-      if (!action.payload.includes('No authentication token found') && 
-          !action.payload.includes('Please login to continue')) {
-        state.error = action.payload;
-      }
-      state.isLoading = false;
+      console.log('setError reducer called with:', action.payload);
+      state.error = action.payload;
     },
-    clearError: (state) => {
-      state.error = null;
+    setCurrentPage: (state, action) => {
+      console.log('setCurrentPage reducer called with:', action.payload);
+      state.currentPage = action.payload;
     },
+    setHasMore: (state, action) => {
+      console.log('setHasMore reducer called with:', action.payload);
+      state.hasMore = action.payload;
+    }
   },
 });
 
-export const { setLoading, setProducts, setError, clearError } = productSlice.actions;
+export const { 
+  setProducts, 
+  appendProducts, 
+  setLoading, 
+  setError, 
+  setCurrentPage, 
+  setHasMore 
+} = productSlice.actions;
+
 export default productSlice.reducer;

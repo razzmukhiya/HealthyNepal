@@ -9,8 +9,8 @@ import "../../styles/VendorProducts.css";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const { seller } = useSelector((state) => state.seller);
-  const { products, isLoading } = useSelector((state) => state.product);
+  const { seller } = useSelector((state) => state.sellers);
+  const { allProducts: products } = useSelector((state) => state.product);
 
   useEffect(() => {
     if (seller?._id) {
@@ -67,9 +67,7 @@ const Products = () => {
               <div className="header-cell">ACTION</div>
             </div>
             
-            {isLoading ? (
-              <div className="products-loading">Loading products...</div>
-            ) : products && products.length > 0 ? (
+            {products && products.length > 0 ? (
               products.map((product, index) => (
                 <div key={product._id} className="table-row">
                   <div className="table-cell"><span>{index + 1}</span></div>

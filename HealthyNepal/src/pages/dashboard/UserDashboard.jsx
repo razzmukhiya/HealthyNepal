@@ -12,7 +12,7 @@ import "../../styles/UserDashboard.css";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, loading, user } = useSelector((state) => state.user);
+  const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
 
   React.useEffect(() => {
     // Only redirect if we're sure the user isn't authenticated

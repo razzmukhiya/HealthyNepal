@@ -62,9 +62,18 @@ const ProductCard = ({ data }) => {
       return "https://via.placeholder.com/200x200?text=Product+Image";
     }
 
-    return firstImage.url.startsWith('http') 
-      ? firstImage.url 
-      : `${server}${firstImage.url}`;
+    // If it's already a full URL, return it
+    if (firstImage.url.startsWith('http')) {
+      return firstImage.url;
+    }
+
+    // If it's a relative path starting with /uploads, use it directly
+    if (firstImage.url.startsWith('/uploads')) {
+      return firstImage.url;
+    }
+
+    // If it's just a filename, add /uploads prefix
+    return `/uploads/${firstImage.url}`;
   };
 
   if (!data) {

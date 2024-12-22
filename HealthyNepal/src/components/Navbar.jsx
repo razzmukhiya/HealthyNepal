@@ -34,6 +34,7 @@ const Navbar = () => {
 
   const handleSellerLogout = () => {
     dispatch(sellerLogout());
+    navigate('/seller-login');
   };
 
   useEffect(() => {
@@ -50,8 +51,14 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(loadUser());
-    dispatch(loadSeller());
+    const sellerToken = localStorage.getItem("sellerAccessToken");
+    const userToken = localStorage.getItem("accessToken");
+    
+    if (sellerToken) {
+      dispatch(loadSeller());
+    } else if (userToken) {
+      dispatch(loadUser());
+    }
   }, [dispatch]);
 
   const handleSearchChange = (e) => {
@@ -86,7 +93,7 @@ const Navbar = () => {
         </NavLink>
 
         {!isSeller && !isAuthenticated && (
-          <NavLink to="/sellersignup" className="Navlink">
+          <NavLink to="/seller-register" className="Navlink">
             <p>Become a Seller</p>
             <hr />
           </NavLink>
@@ -99,7 +106,7 @@ const Navbar = () => {
               <hr />
             </NavLink>
 
-            <NavLink to="/signup" className="Navlink">
+            <NavLink to="/sign-up" className="Navlink">
               <p>Signup</p>
               <hr />
             </NavLink>

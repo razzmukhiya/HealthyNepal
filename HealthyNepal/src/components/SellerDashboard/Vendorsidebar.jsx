@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+  import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { FaHome, FaShoppingBag, FaBox, FaPlus, FaMoneyBill } from 'react-icons/fa';
@@ -9,15 +9,15 @@ const Vendorsidebar = ({ active }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { icon: <FaHome size={20} />, text: "Dashboard", path: "/seller/dashboard", id: 1 },
-    { icon: <FaShoppingBag size={20} />, text: "Orders", path: "/seller/orders", id: 2 },
-    { icon: <FaBox size={20} />, text: "Products", path: "/seller/products", id: 3 },
-    { icon: <FaPlus size={20} />, text: "Add Product", path: "/seller/add-products", id: 4 },
-    { icon: <FaMoneyBill size={20} />, text: "Withdrawl", path: "/seller/withdrawl", id: 5 },
-    { icon: <BiSupport size={20} />, text: "Customer Support", path: "/seller/customer-support", id: 6 },
-    { icon: <BiChat size={20} />, text: "Chat Support", path: "/seller/chat-support", id: 7 },
-    { icon: <BiUser size={20} />, text: "Profile", path: "/seller/profile", id: 8 },
-    { icon: <BiCog size={20} />, text: "Settings", path: "/seller/settings", id: 9 },
+    { icon: <FaHome size={20} />, text: "Dashboard", path: "dashboard", id: 1 },
+    { icon: <FaShoppingBag size={20} />, text: "Orders", path: "orders", id: 2 },
+    { icon: <FaBox size={20} />, text: "Products", path: "products", id: 3 },
+    { icon: <FaPlus size={20} />, text: "Add Product", path: "add-products", id: 4 },
+    { icon: <FaMoneyBill size={20} />, text: "Withdrawl", path: "withdrawl", id: 5 },
+    { icon: <BiSupport size={20} />, text: "Customer Support", path: "customer-support", id: 6 },
+    { icon: <BiChat size={20} />, text: "Chat Support", path: "chat-support", id: 7 },
+    { icon: <BiUser size={20} />, text: "Profile", path: "profile", id: 8 },
+    { icon: <BiCog size={20} />, text: "Settings", path: "settings", id: 9 },
   ];
 
   return (

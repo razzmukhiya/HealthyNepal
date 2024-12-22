@@ -6,14 +6,15 @@ const cors = require('cors');
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const logError = require('./utils/logger');
+const { logger, logAPIRequest } = require('./utils/logger');
+const morgan = require('morgan');
 
 // Initialize express app
 const app = express();
 
 // CORS configuration
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: true, // Allow all origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -22,9 +23,30 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
-// Handle CORS preflight requests
-app.options('*', cors(corsOptions));
+// Enable CORS with the options
 app.use(cors(corsOptions));
+
+// Request logging middleware
+app.use(morgan('combined', { stream: logger.stream }));
+
+// Log all requests
+app.use((req, res, next) => {
+    const startTime = Date.now();
+    logAPIRequest(req);
+
+    // Log response time after request is completed
+    res.on('finish', () => {
+        const duration = Date.now() - startTime;
+        logger.info({
+            type: 'request-completed',
+            method: req.method,
+            url: req.url,
+            status: res.statusCode,
+            duration: `${duration}ms`
+        });
+    });
+    next();
+});
 
 // Body parser
 app.use(express.json());
@@ -43,6 +65,8 @@ if (!fs.existsSync(avatarsDir)) {
 
 // Serve static files from uploads directory
 app.use("/uploads", express.static(uploadsDir));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "../HealthyNepal/public/uploads")));
 
 // Config
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -66,11 +90,13 @@ app.get("/api/v2/health", (req, res) => {
 const user = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
+const admin = require("./controller/admin");
 
 // Use routes
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
+app.use("/api/v2/admin", admin);
 
 // Global error handler for authentication errors
 app.use((err, req, res, next) => {
@@ -90,6 +116,11 @@ app.use((err, req, res, next) => {
 
 // Handle 404 errors for API routes
 app.use('/api', (req, res, next) => {
+    logger.warn({
+        type: '404-error',
+        url: req.originalUrl,
+        method: req.method
+    });
     const error = new Error(`API route ${req.originalUrl} not found`);
     error.status = 404;
     next(error);
@@ -97,6 +128,11 @@ app.use('/api', (req, res, next) => {
 
 // Handle 404 for other routes
 app.use((req, res, next) => {
+    logger.warn({
+        type: '404-error',
+        url: req.originalUrl,
+        method: req.method
+    });
     const error = new Error(`Route ${req.originalUrl} not found`);
     error.status = 404;
     next(error);
@@ -109,10 +145,28 @@ app.use((err, req, res, next) => {
             try {
                 fs.unlinkSync(file.path);
             } catch (error) {
-                console.error('Error deleting file:', error);
+                logger.error('Error deleting file:', {
+                    error: error.message,
+                    file: file.path
+                });
             }
         }
     }
+    next(err);
+});
+
+// Log all errors
+app.use((err, req, res, next) => {
+    logger.error({
+        type: 'error',
+        error: err.message,
+        stack: err.stack,
+        url: req.originalUrl,
+        method: req.method,
+        body: req.body,
+        query: req.query,
+        params: req.params
+    });
     next(err);
 });
 

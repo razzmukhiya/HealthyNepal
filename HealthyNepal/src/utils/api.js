@@ -19,7 +19,6 @@ const publicRoutes = [
 
 const api = axios.create({
   baseURL: server,
-  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -40,7 +39,7 @@ api.interceptors.request.use(
       ? localStorage.getItem('sellerAccessToken')
       : localStorage.getItem('userAccessToken');
     
-    // Only add token for authenticated routes
+    // Add token for all routes except public ones
     if (token && !isPublicRoute(config.url)) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -57,8 +56,22 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('API Response:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
   async (error) => {
+    console.error('API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.message,
+      response: error.response?.data
+    });
+
     const originalRequest = error.config;
 
     // Don't retry for public routes
@@ -164,11 +177,26 @@ export const handleApiError = (error) => {
   };
 };
 
-// API methods
+// Add Authorization header to all methods
+const addAuthHeader = (config = {}) => {
+  const token = localStorage.getItem('userAccessToken');
+  if (token) {
+    return {
+      ...config,
+      headers: {
+        ...config.headers,
+        Authorization: `Bearer ${token}`
+      }
+    };
+  }
+  return config;
+};
+
+// API methods with auth headers
 export const apiMethods = {
   get: async (url, config = {}) => {
     try {
-      const response = await api.get(url, { ...config, withCredentials: true });
+      const response = await api.get(url, addAuthHeader(config));
       return { data: response.data, error: null };
     } catch (error) {
       return handleApiError(error);
@@ -177,7 +205,7 @@ export const apiMethods = {
 
   post: async (url, data = {}, config = {}) => {
     try {
-      const response = await api.post(url, data, { ...config, withCredentials: true });
+      const response = await api.post(url, data, addAuthHeader(config));
       return { data: response.data, error: null };
     } catch (error) {
       return handleApiError(error);
@@ -186,7 +214,7 @@ export const apiMethods = {
 
   put: async (url, data = {}, config = {}) => {
     try {
-      const response = await api.put(url, data, { ...config, withCredentials: true });
+      const response = await api.put(url, data, addAuthHeader(config));
       return { data: response.data, error: null };
     } catch (error) {
       return handleApiError(error);
@@ -195,7 +223,7 @@ export const apiMethods = {
 
   patch: async (url, data = {}, config = {}) => {
     try {
-      const response = await api.patch(url, data, { ...config, withCredentials: true });
+      const response = await api.patch(url, data, addAuthHeader(config));
       return { data: response.data, error: null };
     } catch (error) {
       return handleApiError(error);
@@ -204,7 +232,7 @@ export const apiMethods = {
 
   delete: async (url, config = {}) => {
     try {
-      const response = await api.delete(url, { ...config, withCredentials: true });
+      const response = await api.delete(url, addAuthHeader(config));
       return { data: response.data, error: null };
     } catch (error) {
       return handleApiError(error);
