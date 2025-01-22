@@ -72,9 +72,9 @@ const ProductDetails = () => {
   }, [product, dispatch]);
 
   const handleBuyNow = useCallback(() => {
-    handleAddToCart();
-    navigate('/cart');
-  }, [handleAddToCart, navigate]);
+    
+    navigate('/checkout');
+  }, [ navigate]);
 
   const toggleWishlist = useCallback(() => {
     setIsWishlisted(prev => !prev);

@@ -131,7 +131,7 @@ router.post(
       
       const sellerEmail = await Shop.findOne({ email });
       if (sellerEmail) {
-        return next(new ErrorHandler("User already exists", 400));
+        return next(new ErrorHandler("A seller with this email already exists. Please use a different email.", 400));
       }
 
       const newShop = await Shop.create({
@@ -162,6 +162,23 @@ router.post(
         process.env.JWT_SECRET_KEY,
         { expiresIn: "7d" }
       );
+
+      console.log("Response sent:", {
+        success: true,
+        accessToken,
+        refreshToken,
+        user: {
+          _id: newShop._id,
+          name: newShop.name,
+          email: newShop.email,
+          role: newShop.role,
+          createdAt: newShop.createdAt,
+          address: newShop.address,
+          phoneNumber: newShop.phoneNumber,
+          zipCode: newShop.zipCode,
+          avatar: newShop.avatar
+        }
+      });
 
       res.status(201).json({
         success: true,

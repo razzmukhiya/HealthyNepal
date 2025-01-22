@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { loadUser } from './redux/actions/user';
@@ -6,6 +6,7 @@ import { loadSeller } from './redux/actions/sellers';
 import { refreshSellerToken } from './utils/refreshToken';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import Checkout from './pages/Checkout'; 
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
@@ -34,6 +35,19 @@ import AdminDashboard from './pages/AdminPanel/AdminDashboard';
 
 function App() {
   const dispatch = useDispatch();
+  const [cartItems, setCartItems] = useState([]);
+
+  const addToCart = (product) => {
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(item => item._id === product._id);
+      if (existingItem) {
+        return prevItems.map(item =>
+          item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prevItems, { ...product, quantity: 1 }];
+    });
+  };
 
   // Setup axios interceptors
   useEffect(() => {
@@ -128,15 +142,14 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/products-page" element={<ProductsPage />} />
+            <Route path="/products" element={<Products addToCart={addToCart} />} />
+            <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} />} />
+            <Route path="/products-page" element={<ProductsPage addToCart={addToCart} />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sign-up" element={<SignupPage />} />
             <Route path="/activation/:activation_token" element={<ActivationPage />} />
             <Route path="/seller-login" element={<Sellerlogin />} />
             <Route path="/seller-register" element={<Sellerregister />} />
-            <Route path="/sellerlogin" element={<Navigate to="/seller-login" replace />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -164,9 +177,11 @@ function App() {
             } />
 
             {/* Other Protected Routes */}
+            <Route path="/checkout" element={<Checkout />} />
+            
             <Route path="/cart" element={
               <ProtectedRoute>
-                <Cart />
+                <Cart cartItems={cartItems} />
               </ProtectedRoute>
             } />
             <Route path="/prescription-medicine" element={

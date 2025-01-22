@@ -47,20 +47,20 @@ const SellerSignup = () => {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
+      
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
         toast.error('Please upload a valid image (JPEG, PNG) or PDF file');
         return;
       }
 
-      // Validate file size (5MB)
+     
       if (file.size > 5 * 1024 * 1024) {
         toast.error('File size should be less than 5MB');
         return;
       }
 
-      // Store the file object
+      
       setFormData(prev => ({ 
         ...prev, 
         document: file,
@@ -74,14 +74,14 @@ const SellerSignup = () => {
     try {
       const form = new FormData();
       
-      // Append all form fields except document and documentPreview
+      
       Object.keys(formData).forEach(key => {
         if (key !== 'document' && key !== 'documentPreview') {
           form.append(key, formData[key]);
         }
       });
       
-      // Append document file if exists
+      
       if (formData.document instanceof File) {
         form.append('document', formData.document);
       }
@@ -92,6 +92,8 @@ const SellerSignup = () => {
         },
         withCredentials: true
       });
+      console.log("Response from server:", response);
+     
 
       if (response.data.success && response.data.token) {
         // Store token in localStorage
@@ -117,7 +119,9 @@ const SellerSignup = () => {
         setSuccessMessage(true);
         
         // Navigate directly to dashboard since we have the token
-        navigate('/seller/dashboard');
+        setTimeout(() => {
+          navigate('/seller-login');
+        }, 10000); // Delay navigation for 3 seconds
       } else {
         throw new Error('Registration failed: Invalid response from server');
       }
@@ -206,7 +210,7 @@ const SellerSignup = () => {
           <button type="submit" className='sign-in-link'>Signup</button>
           <div className="footer">
             <h4>Already have an account?</h4>
-            <Link to="/sellerlogin">Sign In</Link>
+            <Link to="/seller-login">Sign In</Link>
           </div>
         </form>
         {successMessage && (

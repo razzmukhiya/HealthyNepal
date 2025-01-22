@@ -42,14 +42,14 @@ const Login = () => {
         throw new Error("Login failed");
       }
 
-      // Store tokens in localStorage
+      // store token
       localStorage.setItem("userAccessToken", accessToken);
       localStorage.setItem("userRefreshToken", refreshToken);
 
-      // Dispatch login action
+      
       dispatch(login(user));
 
-      // Load user data and wait for it to complete
+      
       await dispatch(loadUser());
       
       toast.success("Login Success!");

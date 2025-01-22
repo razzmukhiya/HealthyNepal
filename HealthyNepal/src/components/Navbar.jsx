@@ -50,15 +50,15 @@ const Navbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const sellerToken = localStorage.getItem("sellerAccessToken");
-    const userToken = localStorage.getItem("accessToken");
-    
-    if (sellerToken) {
-      dispatch(loadSeller());
-    } else if (userToken) {
-      dispatch(loadUser());
-    }
+    useEffect(() => {
+        const sellerToken = localStorage.getItem("sellerAccessToken");
+        const userToken = localStorage.getItem("accessToken");
+        
+        if (sellerToken) {
+            dispatch(loadSeller());
+        } else if (userToken && isAuthenticated && userToken !== null) {
+            dispatch(loadUser());
+        }
   }, [dispatch]);
 
   const handleSearchChange = (e) => {

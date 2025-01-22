@@ -9,7 +9,7 @@ const SellerRegisterPage = () => {
   const { isAuthenticated } = useSelector((state) => state.sellers);
 
   useEffect(() => {
-    // If seller is already authenticated, redirect to dashboard
+    
     if (isAuthenticated) {
       navigate('/seller/dashboard');
     }

@@ -60,7 +60,7 @@ const Products = () => {
               <div className="header-cell">IMAGE</div>
               <div className="header-cell">NAME</div>
               <div className="header-cell">CATEGORY</div>
-              <div className="header-cell">BRAND</div>
+              <div className="header-cell">COMPANY</div>
               <div className="header-cell">PRICE</div>
               <div className="header-cell">DISCOUNT</div>
               <div className="header-cell">STOCK</div>
