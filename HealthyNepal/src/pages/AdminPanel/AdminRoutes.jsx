@@ -2,14 +2,15 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import AdminLayout from '../../components/Layouts/AdminLayout';
-import AdminLogin from './AdminLogin';
-import TempRegister from './TempRegister';
-import Dashboard from './Dashboard';
+import AdminDashboard from './AdminDashboard';
 import Sellers from './Sellers';
 import DeactiveSellers from './DeactiveSellers';
 import SellerRequests from './SellerRequests';
 import ChatSellers from './ChatSellers';
 import WithdrawalRequests from './WithdrawalRequests';
+import ManageUsers from './ManageUsers';
+import Settings from './Settings';
+import Logout from './Logout';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { ToastContainer } from '../../components/common/Toast';
 
@@ -77,7 +78,7 @@ const AdminRoutes = () => {
           path="/admin/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <AdminDashboard />
             </ProtectedRoute>
           } 
         />
@@ -106,7 +107,7 @@ const AdminRoutes = () => {
           } 
         />
         <Route 
-          path="/admin/chat" 
+          path="/admin/chat-sellers" 
           element={
             <ProtectedRoute>
               <ChatSellers />
@@ -114,10 +115,34 @@ const AdminRoutes = () => {
           } 
         />
         <Route 
-          path="/admin/withdrawals" 
+          path="/admin/withdrawal-requests" 
           element={
             <ProtectedRoute>
               <WithdrawalRequests />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/manage-users" 
+          element={
+            <ProtectedRoute>
+              <ManageUsers />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/logout" 
+          element={
+            <ProtectedRoute>
+              <Logout />
             </ProtectedRoute>
           } 
         />
@@ -131,9 +156,6 @@ const AdminRoutes = () => {
           path="/admin/*" 
           element={<Navigate to="/admin/dashboard" replace />} 
         />
-
-        {/* Catch-all Route for Admin */}
-        <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
       </Routes>
 
       {/* Global Toast Container */}

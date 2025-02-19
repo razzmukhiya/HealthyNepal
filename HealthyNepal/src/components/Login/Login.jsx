@@ -54,14 +54,14 @@ const Login = () => {
       
       toast.success("Login Success!");
       
-      // Navigate based on user role
+      
       setTimeout(() => {
         if (user.role === 'seller') {
           navigate('/seller/dashboard', { replace: true });
         } else {
           navigate('/dashboard', { replace: true });
         }
-      }, 100); // Small delay to ensure state updates are processed
+      }, 100); 
       
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || "An unexpected error occurred";
@@ -69,7 +69,7 @@ const Login = () => {
       toast.error(errorMessage);
       console.error(err);
       
-      // Dispatch login fail action
+      
       dispatch(loadUserFail(errorMessage));
     } finally {
       setLoading(false);

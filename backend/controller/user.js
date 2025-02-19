@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Set to 5MB
+  limits: { fileSize: 5 * 1024 * 1024 }, 
 });
 
 //load env variable
@@ -35,7 +35,7 @@ router.post(
   upload.single("avatar"),
   catchAsyncErrors(async (req, res, next) => {
     const { name, email, password } = req.body;
-    const avatar = req.file ? req.file.path : null; // Get avatar from the uploaded file
+    const avatar = req.file ? req.file.path : null; 
 
     const userEmail = await User.findOne({ email });
 
@@ -47,26 +47,26 @@ router.post(
       return next(new ErrorHandler("Please add an avatar", 400));
     }
 
-    // Create a new user
-    console.log("Creating user with email:", email); // Log email
-    console.log("Password before hashing:", password); // Log password before hashing
+    
+    console.log("Creating user with email:", email); 
+    console.log("Password before hashing:", password); 
 
     const newUser = new User({
       name,
       email,
       password,
       avatar: {
-        url: avatar, // Assuming avatar.path contains the URL
-        public_id: req.file.filename, // Assuming filename can be used as a public ID
+        url: avatar, 
+        public_id: req.file.filename, 
       },
     });
 
-    // Save the user to the database
-    console.log("User object before saving:", newUser); // Log user object before saving
+    
+    console.log("User object before saving:", newUser); 
     await newUser.save();
-    console.log("User created successfully:", newUser); // Log success message
+    console.log("User created successfully:", newUser); 
 
-    // Respond with success
+    
     return res.status(201).json({
       success: true,
       data: newUser,
@@ -74,7 +74,7 @@ router.post(
   })
 );
 
-// Login user
+
 router.post(
   "/login-user",
   catchAsyncErrors(async (req, res, next) => {

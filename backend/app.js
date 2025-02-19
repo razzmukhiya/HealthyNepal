@@ -9,12 +9,12 @@ const fs = require('fs');
 const { logger, logAPIRequest } = require('./utils/logger');
 const morgan = require('morgan');
 
-// Initialize express app
+
 const app = express();
 
-// CORS configuration
+
 const corsOptions = {
-    origin: true, // Allow all origins
+    origin: true, 
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -23,18 +23,18 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
-// Enable CORS with the options
+
 app.use(cors(corsOptions));
 
-// Request logging middleware
+
 app.use(morgan('combined', { stream: logger.stream }));
 
-// Log all requests
+
 app.use((req, res, next) => {
     const startTime = Date.now();
     logAPIRequest(req);
 
-    // Log response time after request is completed
+    
     res.on('finish', () => {
         const duration = Date.now() - startTime;
         logger.info({
@@ -48,12 +48,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Body parser
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Ensure uploads directories exist
+
 const uploadsDir = path.join(__dirname, "../uploads");
 const avatarsDir = path.join(uploadsDir, "avatars");
 if (!fs.existsSync(uploadsDir)) {
@@ -63,7 +63,7 @@ if (!fs.existsSync(avatarsDir)) {
     fs.mkdirSync(avatarsDir);
 }
 
-// Serve static files from uploads directory
+
 app.use("/uploads", express.static(uploadsDir));
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "../HealthyNepal/public/uploads")));

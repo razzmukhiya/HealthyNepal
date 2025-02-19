@@ -2,33 +2,10 @@ import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
+import { getImageUrl, handleImageError } from '../utils/imageUtils';
 import '../styles/ProductDetailsCard.css';
 
 const ProductDetailsCard = ({ setOpen, data }) => {
-  const getImageUrl = (imageData) => {
-    if (!imageData || !Array.isArray(imageData) || imageData.length === 0) {
-      return "https://via.placeholder.com/400x400?text=Product+Image";
-    }
-
-    const firstImage = imageData[0];
-    if (!firstImage.url) {
-      return "https://via.placeholder.com/400x400?text=Product+Image";
-    }
-
-    // If it's already a full URL, return it
-    if (firstImage.url.startsWith('http')) {
-      return firstImage.url;
-    }
-
-    // If it's a relative path starting with /uploads, use it directly
-    if (firstImage.url.startsWith('/uploads')) {
-      return firstImage.url;
-    }
-
-    // If it's just a filename, add /uploads prefix
-    return `/uploads/${firstImage.url}`;
-  };
-
   return (
     <div className="product-details-card">
       <div className="product-details-overlay" onClick={() => setOpen(false)} />
@@ -50,7 +27,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               onError={(e) => {
                 console.log('Image load error:', e.target.src);
                 e.target.onerror = null;
-                e.target.src = "https://via.placeholder.com/400x400?text=Product+Image";
+                handleImageError(e);
               }}
             />
           </div>

@@ -38,6 +38,8 @@ function App() {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product) => {
+    console.log('Adding to cart:', product);
+    console.log('Current cart items:', cartItems);
     setCartItems((prevItems) => {
       const existingItem = prevItems.find(item => item._id === product._id);
       if (existingItem) {
@@ -49,9 +51,9 @@ function App() {
     });
   };
 
-  // Setup axios interceptors
+  
   useEffect(() => {
-    // Request interceptor
+    
     axios.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('sellerAccessToken');
@@ -65,27 +67,27 @@ function App() {
       }
     );
 
-    // Response interceptor
+    
     axios.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
 
-        // If error is 401 and we haven't tried to refresh token yet
+        
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
-            // Try to refresh the token
+            
             const newToken = await refreshSellerToken();
             
-            // Update the original request with new token
+            
             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
             
-            // Retry the original request
+            
             return axios(originalRequest);
           } catch (refreshError) {
-            // If refresh fails, clear tokens
+            
             localStorage.removeItem('sellerAccessToken');
             localStorage.removeItem('sellerRefreshToken');
             return Promise.reject(refreshError);
@@ -99,7 +101,8 @@ function App() {
   
   useEffect(() => {
     const loadData = async () => {
-      // Load seller data if seller token exists
+        console.log('Loading data...');
+      
       const sellerToken = localStorage.getItem('sellerAccessToken');
       if (sellerToken) {
         try {
@@ -109,7 +112,7 @@ function App() {
         }
       }
 
-      // Load user data if user token exists
+    
       const userToken = localStorage.getItem('userAccessToken');
       if (userToken) {
         try {
@@ -140,7 +143,7 @@ function App() {
         />
         <MainLayout>
           <Routes>
-            {/* Public Routes */}
+            
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products addToCart={addToCart} />} />
             <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} />} />
@@ -155,28 +158,28 @@ function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/register" element={<AdminRegister />} />
 
-            {/* Protected Routes for Admin */}
+            
             <Route path="/admin/dashboard" element={
               <ProtectedRoute type="admin">
                 <AdminDashboard />
               </ProtectedRoute>
             } />
 
-            {/* Protected Routes for User */}
+            
             <Route path="/dashboard/*" element={
               <ProtectedRoute>
                 <UserDashboard />
               </ProtectedRoute>
             } />
             
-            {/* Protected Routes for Seller */}
+            
             <Route path="/seller/*" element={
               <ProtectedRoute type="seller">
                 <VendorDashboard />
               </ProtectedRoute>
             } />
 
-            {/* Other Protected Routes */}
+            
             <Route path="/checkout" element={<Checkout />} />
             
             <Route path="/cart" element={

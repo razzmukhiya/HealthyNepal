@@ -27,6 +27,8 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
         : localStorage.getItem('userAccessToken');
 
     useEffect(() => {
+        let isMounted = true;
+        
         const initAuth = async () => {
             try {
                 if (type === 'seller' && token && !seller) {
@@ -37,11 +39,18 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
             } catch (error) {
                 console.error('Failed to load auth data:', error);
             }
-            setIsInitialLoad(false);
+            if (isMounted) {
+                setIsInitialLoad(false);
+            }
         };
 
         initAuth();
-    }, [dispatch, type, token, seller, user]);
+        
+        return () => {
+            isMounted = false;
+        };
+    }, [dispatch, type, token]);
+
 
     // Handle seller routes
     if (type === 'seller') {

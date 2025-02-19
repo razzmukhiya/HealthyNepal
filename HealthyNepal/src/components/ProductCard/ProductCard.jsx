@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import Rating from "../Rating";
 import { server } from "../../utils/api";
 import { addToCart } from "../../redux/reducers/cartSlice";
+import { getImageUrl, handleImageError } from "../../utils/imageUtils";
 import { addToWishlist, removeFromWishlist } from "../../redux/reducers/wishlistSlice";
 
 const ProductCard = ({ data }) => {
@@ -52,30 +53,6 @@ const ProductCard = ({ data }) => {
     }
   };
 
-  const getImageUrl = (imageData) => {
-    if (!imageData || !Array.isArray(imageData) || imageData.length === 0) {
-      return "https://via.placeholder.com/200x200?text=Product+Image";
-    }
-
-    const firstImage = imageData[0];
-    if (!firstImage.url) {
-      return "https://via.placeholder.com/200x200?text=Product+Image";
-    }
-
-    // If it's already a full URL, return it
-    if (firstImage.url.startsWith('http')) {
-      return firstImage.url;
-    }
-
-    // If it's a relative path starting with /uploads, use it directly
-    if (firstImage.url.startsWith('/uploads')) {
-      return firstImage.url;
-    }
-
-    // If it's just a filename, add /uploads prefix
-    return `/uploads/${firstImage.url}`;
-  };
-
   if (!data) {
     return null;
   }
@@ -84,13 +61,13 @@ const ProductCard = ({ data }) => {
     <div className='product-card'>
       <Link to={`/product/${data._id}`}>
         <img
-          src={getImageUrl(data.images)}
+          src={getImageUrl(data?.images)}
           alt={data.name} 
           className='product-image'
           onError={(e) => {
             console.log('Image load error:', e.target.src);
             e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/200x200?text=Product+Image";
+            handleImageError(e);
           }}
         />
       </Link>

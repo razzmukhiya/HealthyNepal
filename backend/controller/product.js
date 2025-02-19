@@ -232,6 +232,76 @@ router.post(
   })
 );
 
-// Add similar logging for other routes...
+// Get all products of a shop
+router.get(
+  "/get-all-products-shop/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.find({ shopId: req.params.id })
+        .sort({ createdAt: -1 })
+        .lean();
+
+      res.status(200).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      logError(error, { route: 'get-all-products-shop', shopId: req.params.id });
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Delete product of a shop
+router.delete(
+  "/delete-product/:id",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
+
+      // Delete product images from uploads directory
+      if (product.images && product.images.length > 0) {
+        product.images.forEach(image => {
+          const imagePath = path.join(__dirname, '../../uploads', image.public_id);
+          if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+          }
+        });
+      }
+
+      await Product.findByIdAndDelete(req.params.id);
+
+      // Clear relevant caches
+      productCache.clear();
+
+      res.status(200).json({
+        success: true,
+        message: "Product deleted successfully"
+      });
+    } catch (error) {
+      console.error('Detailed delete error:', {
+        message: error.message,
+        stack: error.stack,
+        productId: req.params.id,
+        timestamp: new Date().toISOString()
+      });
+      logError(error, { 
+        route: 'delete-product', 
+        productId: req.params.id,
+        details: {
+          message: error.message,
+          stack: error.stack
+        }
+      });
+      return next(new ErrorHandler(`Failed to delete product: ${error.message}`, 500));
+
+    }
+  })
+);
 
 module.exports = router;

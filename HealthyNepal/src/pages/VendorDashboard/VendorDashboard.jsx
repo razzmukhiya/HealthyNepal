@@ -11,6 +11,7 @@ import Settings from './Settings';
 import Withdrawl from './Withdrawl';
 import SellerDashboard from './SellerDashboard';
 import Vendorsidebar from '../../components/SellerDashboard/Vendorsidebar';
+import ViewProduct from './ViewProduct';
 import EditProduct from './EditProduct';
 import DeleteProduct from './DeleteProduct';
 import VendorSellerProfile from './VendorSellerProfile';
@@ -23,7 +24,6 @@ import '../../styles/notifications.css';
 function VendorDashboard() {
   const { seller } = useSelector((state) => state.sellers);
 
-
   return (
     <div className="vendor-dashboard">
       <aside className="vendor-dashboard__sidebar">
@@ -35,8 +35,9 @@ function VendorDashboard() {
           <Route path="dashboard" element={<SellerDashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="add-products" element={<AddProducts />} />
-          <Route path="edit-product" element={<EditProduct />} />
-          <Route path="delete-product" element={<DeleteProduct />} />
+          <Route path="products/view/:id" element={<ViewProduct />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
+          <Route path="products/delete/:id" element={<DeleteProduct />} />
           <Route path="orders" element={<Orders />} />
           <Route path="customer-support" element={<CustomerSupport />} />
           <Route path="withdrawl" element={<Withdrawl />} />

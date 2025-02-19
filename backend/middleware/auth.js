@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const Shop = require("../model/shop");
 const User = require("../model/user");
 
-// List of public routes that don't require authentication
 const publicRoutes = [
     '/product/get-all-products',
     '/product/get-product',
@@ -16,14 +15,14 @@ const publicRoutes = [
     '/admin/login'
 ];
 
-// Helper function to check if a route is public
+
 const isPublicRoute = (path) => {
     return publicRoutes.some(route => path.includes(route));
 };
 
 exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
     try {
-        // Skip authentication for public routes
+        
         if (isPublicRoute(req.path)) {
             return next();
         }

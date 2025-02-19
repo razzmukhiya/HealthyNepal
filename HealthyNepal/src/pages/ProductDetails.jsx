@@ -4,8 +4,10 @@ import { useDispatch } from 'react-redux';
 import { AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import Rating from '../components/Rating';
+import { getImageUrl, handleImageError } from '../utils/imageUtils';
 import api from '../utils/api';
 import '../styles/ProductDetails.css';
+
 
 // Simple cache implementation
 const cache = new Map();
@@ -60,16 +62,21 @@ const ProductDetails = () => {
     fetchProduct();
   }, [fetchProduct]);
 
-  const handleAddToCart = useCallback(() => {
-    if (!product.stock) {
-      toast.error('Product is out of stock!');
-      return;
-    }
-    
-    const cartData = { ...product, qty: 1 };
-    dispatch({ type: 'ADD_TO_CART', payload: cartData });
-    toast.success('Added to cart successfully!');
-  }, [product, dispatch]);
+    const handleAddToCart = useCallback(() => {
+      if (!product.stock) {
+        toast.error('Product is out of stock!');
+        return;
+      }
+      
+      const cartData = { 
+        ...product, 
+        qty: 1,
+        image: Array.isArray(product.images) ? product.images[0]?.url : product.images?.url
+      };
+      dispatch({ type: 'addToCart', payload: cartData });
+      toast.success('Added to cart successfully!');
+    }, [product, dispatch]);
+
 
   const handleBuyNow = useCallback(() => {
     
@@ -126,10 +133,8 @@ const ProductDetails = () => {
         <div className="product-images">
           <div className="main-image">
             <img 
-              src={Array.isArray(product.images) 
-                ? product.images[selectedImage].url
-                : product.images?.url || "https://via.placeholder.com/400x400?text=Product+Image"
-              } 
+              src={getImageUrl(product.images, selectedImage)}
+
               alt={product.name}
               loading="lazy"
             />
@@ -142,7 +147,8 @@ const ProductDetails = () => {
                 onClick={() => setSelectedImage(index)}
               >
                 <img 
-                  src={image.url}
+                  src={getImageUrl([image])}
+
                   alt={`${product.name} - ${index + 1}`}
                   loading="lazy"
                 />

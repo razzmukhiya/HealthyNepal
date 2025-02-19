@@ -118,12 +118,12 @@ const SellerSignup = () => {
         });
         setSuccessMessage(true);
         
-        // Navigate directly to dashboard since we have the token
+        
         setTimeout(() => {
           navigate('/seller-login');
-        }, 10000); // Delay navigation for 3 seconds
+        }, 100000); 
       } else {
-        throw new Error('Registration failed: Invalid response from server');
+        throw new Error('');
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
@@ -207,6 +207,7 @@ const SellerSignup = () => {
               </label>
             </div>
           </div>
+          <p>Upload Your Pharmacy Store PAN</p>
           <button type="submit" className='sign-in-link'>Signup</button>
           <div className="footer">
             <h4>Already have an account?</h4>

@@ -1,120 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { server } from '../../../server';
-import { toast } from 'react-toastify';
-import "../../styles/ViewProduct.css";
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProduct } from '../../redux/actions/product';
+import Vendorsidebar from '../../components/SellerDashboard/Vendorsidebar';
+import Vendornavtop from '../../components/SellerDashboard/Vendornavtop';
+import '../../styles/VendorViewProduct.css';
 
 const ViewProduct = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
+  const { product } = useSelector((state) => state.product);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(`${server}/product/get-product/${id}`);
-        if (!response.data.success) {
-          throw new Error('Failed to fetch product');
-        }
-        setProduct(response.data.product);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        toast.error(error.response?.data?.message || 'Error fetching product details');
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [id]);
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (!product) {
-    return <div className="error">Product not found</div>;
-  }
+    dispatch(getProduct(id));
+  }, [dispatch, id]);
 
   return (
-    <div className="view-product">
-      <div className="view-product-header">
-        <h2 className="view-product-title">{product.name}</h2>
-        <button 
-          onClick={() => navigate(`/seller/products/edit/${id}`)}
-          className="edit-btn"
-        >
-          Edit Product
-        </button>
-      </div>
-
-      <div className="product-images">
-        {product.images.map((image, index) => (
-          <img
-            key={index}
-            src={image.url}
-            alt={`Product ${index + 1}`}
-            className="product-image"
-          />
-        ))}
-      </div>
-
-      <div className="product-details">
-        <div className="detail-group">
-          <label>Description</label>
-          <p>{product.description}</p>
+    <div className="vendor-container">
+      <Vendorsidebar active={3} />
+      <div className="vendor-content">
+        <div className="vendor-header">
+          <Vendornavtop />
         </div>
+        <div className="vendor-body">
+          {product ? (
+            <div className="product-details">
+              <h2 className="product-title">{product.name}</h2>
+              
+              <div className="product-images">
+                {product.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image.url || `/uploads/${image.public_id}`}
+                    alt={`Product ${index + 1}`}
+                    className="product-image"
+                  />
+                ))}
+              </div>
 
-        <div className="detail-row">
-          <div className="detail-group">
-            <label>Category</label>
-            <p>{product.category}</p>
-          </div>
-          <div className="detail-group">
-            <label>Brand</label>
-            <p>{product.brand || 'N/A'}</p>
-          </div>
-        </div>
-
-        <div className="detail-row">
-          <div className="detail-group">
-            <label>Original Price</label>
-            <p>₹{product.originalPrice}</p>
-          </div>
-          <div className="detail-group">
-            <label>Discount Price</label>
-            <p>₹{product.discountPrice}</p>
-          </div>
-          <div className="detail-group">
-            <label>Stock</label>
-            <p>{product.stock}</p>
-          </div>
-        </div>
-
-        {product.ratings > 0 && (
-          <div className="detail-group">
-            <label>Rating</label>
-            <p>{product.ratings.toFixed(1)} / 5</p>
-          </div>
-        )}
-
-        {product.reviews?.length > 0 && (
-          <div className="detail-group">
-            <label>Reviews ({product.reviews.length})</label>
-            <div className="reviews-list">
-              {product.reviews.map((review, index) => (
-                <div key={index} className="review-item">
-                  <div className="review-header">
-                    <span className="reviewer-name">{review.user.name}</span>
-                    <span className="review-rating">{review.rating} / 5</span>
-                  </div>
-                  <p className="review-comment">{review.comment}</p>
+              <div className="product-info">
+                <div className="info-row">
+                  <span className="info-label">Category:</span>
+                  <span className="info-value">{product.category}</span>
                 </div>
-              ))}
+                <div className="info-row">
+                  <span className="info-label">Price:</span>
+                  <span className="info-value">
+                    ₹{product.discountPrice || product.originalPrice}
+                    {product.discountPrice && (
+                      <span className="original-price">₹{product.originalPrice}</span>
+                    )}
+                  </span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">Stock:</span>
+                  <span className="info-value">{product.stock}</span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">Description:</span>
+                  <p className="info-value description">{product.description}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <p>Loading product details...</p>
+          )}
+        </div>
       </div>
     </div>
   );

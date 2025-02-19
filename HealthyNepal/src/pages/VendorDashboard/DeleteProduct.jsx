@@ -28,9 +28,14 @@ const DeleteProduct = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${server}/product/delete-product/${id}`, {
+      const response = await axios.delete(`${server}/product/delete-product/${id}`, {
         withCredentials: true
       });
+      
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || "Failed to delete product");
+      }
+
       toast.success('Product deleted successfully');
       navigate('/seller/products');
     } catch (error) {
@@ -60,12 +65,14 @@ const DeleteProduct = () => {
             <div className="delete-product-content">
               <div className="product-info">
                 <img 
-                  src={`${window.location.origin}/${product.images[0]}`}
+                  src={product.images[0]?.url || `/uploads/${product.images[0]?.public_id}` || "/src/assets/default-product.png"}
+
                   alt={product.name}
                   className="product-image"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/60";
+                    e.target.src = "/src/assets/default-product.png";
+
                   }}
                 />
                 <div className="product-details">

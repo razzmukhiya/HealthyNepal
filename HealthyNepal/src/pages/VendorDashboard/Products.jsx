@@ -73,12 +73,16 @@ const Products = () => {
                   <div className="table-cell"><span>{index + 1}</span></div>
                   <div className="table-cell image-cell">
                     <img 
-                      src={product.images[0]?.url || `/uploads/${product.images[0]?.public_id}` || "https://via.placeholder.com/50"}
+                      src={product.images[0]?.url || `/uploads/${product.images[0]?.public_id}` || "/src/assets/default-product.png"}
+
+
                       alt={product.name} 
                       className="product-image"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://via.placeholder.com/50";
+                        e.target.src = "/src/assets/default-product.png";
+
+
                       }}
                     />
                   </div>
@@ -95,20 +99,23 @@ const Products = () => {
                   <div className="table-cell"><span>{product.stock}</span></div>
                   <div className="table-cell actions">
                     <Link to={`/seller/products/view/${product._id}`}>
-                      <button className="view-btn" title="View Product">
-                        <AiOutlineEye size={24} style={{color: '#ffffff'}} />
+
+                      <button className="view-btn" title="View Product" style={{padding: '4px', width: '32px', height: '32px'}}>
+                        <AiOutlineEye size={20} style={{color: '#ffffff'}} />
                       </button>
                     </Link>
                     <Link to={`/seller/products/edit/${product._id}`}>
-                      <button className="edit-btn" title="Edit Product">
-                        <AiOutlineEdit size={24} style={{color: '#000000'}} />
+
+                      <button className="edit-btn" title="Edit Product" style={{padding: '4px', width: '32px', height: '32px'}}>
+                        <AiOutlineEdit size={20} style={{color: '#000000'}} />
                       </button>
                     </Link>
                     <Link to={`/seller/products/delete/${product._id}`}>
-                      <button className="delete-btn" title="Delete Product">
-                        <AiOutlineDelete size={24} style={{color: '#ffffff'}} />
+                      <button className="delete-btn" title="Delete Product" style={{padding: '4px', width: '32px', height: '32px'}}>
+                        <AiOutlineDelete size={20} style={{color: '#ffffff'}} />
                       </button>
                     </Link>
+
                   </div>
                 </div>
               ))

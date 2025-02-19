@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAdmin } from '../../redux/reducers/authSlice';
+import NewAdminSidebar from '../../pages/AdminPanel/NewAdminSidebar';
 import '../../styles/adminlayout.css';
 
 const AdminLayout = ({ children }) => {
@@ -26,71 +27,14 @@ const AdminLayout = ({ children }) => {
     navigate('/admin/login');
   };
 
-  const menuItems = [
-    {
-      title: 'Dashboard',
-      path: '/admin/dashboard',
-      icon: 'fas fa-tachometer-alt'
-    },
-    {
-      title: 'Active Sellers',
-      path: '/admin/sellers',
-      icon: 'fas fa-store'
-    },
-    {
-      title: 'Deactive Sellers',
-      path: '/admin/deactive-sellers',
-      icon: 'fas fa-store-slash'
-    },
-    {
-      title: 'Seller Requests',
-      path: '/admin/seller-requests',
-      icon: 'fas fa-user-plus'
-    },
-    {
-      title: 'Withdrawal Requests',
-      path: '/admin/withdrawals',
-      icon: 'fas fa-money-bill-wave'
-    },
-    {
-      title: 'Chat Support',
-      path: '/admin/chat',
-      icon: 'fas fa-comments'
-    }
-  ];
-
   return (
     <div className={`admin-layout ${isSidebarOpen ? '' : 'sidebar-collapsed'}`}>
       {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <h1 className="logo">HealthyNepal</h1>
-          <button 
-            className="sidebar-toggle"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <i className={`fas fa-${isSidebarOpen ? 'chevron-left' : 'chevron-right'}`}></i>
-          </button>
-        </div>
-
-        <nav className="sidebar-nav">
-          {menuItems.map((item) => (
-            <a
-              key={item.path}
-              href={item.path}
-              className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                navigate(item.path);
-                if (isMobile) setIsSidebarOpen(false);
-              }}
-            >
-              <i className={item.icon}></i>
-              <span className="nav-text">{item.title}</span>
-            </a>
-          ))}
-        </nav>
-      </aside>
+      <NewAdminSidebar 
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        isMobile={isMobile}
+      />
 
       {/* Main Content */}
       <main className="main-content">
