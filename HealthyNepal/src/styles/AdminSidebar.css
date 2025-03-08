@@ -1,0 +1,48 @@
+.sidebar {
+width: 250px; /* Set a fixed width for the sidebar */
+background-color: #f8f9fa; /* Light background for a modern look */
+padding: 20px; /* Padding for spacing */
+box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+position: fixed; /* Fixed positioning */
+top: 0; /* Align to the top */
+left: 0; /* Align to the left */
+height: 100%; /* Full height */
+overflow-y: auto; /* Scroll if content overflows */
+transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.sidebar h2 {
+font-size: 26px; /* Increased header font size for better visibility */
+margin-bottom: 24px; /* Increased space below the header */
+color: #343a40; /* Darker color for the header */
+}
+
+.sidebar ul {
+list-style-type: none; /* Remove default list styles */
+padding: 0; /* Remove default padding */
+}
+
+.sidebar li {
+margin: 15px 0; /* Space between list items */
+}
+
+.sidebar a {
+text-decoration: none; /* Remove underline from links */
+color: #495057; /* Darker link color for better contrast */
+font-size: 18px; /* Font size for links */
+display: flex; /* Flexbox for icon and text alignment */
+align-items: center; /* Center items vertically */
+transition: color 0.3s, background-color 0.3s; /* Smooth transitions */
+padding: 10px; /* Padding for clickable area */
+border-radius: 5px; /* Rounded corners */
+}
+
+.sidebar a:hover {
+color: #ffffff; /* Change text color on hover */
+background-color: #007bff; /* Change background color on hover */
+}
+
+.sidebar a.active {
+color: #ffffff; /* Active link text color */
+background-color: #0056b3; /* Active link background color */
+}

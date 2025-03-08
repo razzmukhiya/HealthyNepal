@@ -9,9 +9,7 @@ const fs = require('fs');
 const { logger, logAPIRequest } = require('./utils/logger');
 const morgan = require('morgan');
 
-
 const app = express();
-
 
 const corsOptions = {
     origin: true, 
@@ -23,18 +21,13 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
-
 app.use(cors(corsOptions));
-
-
 app.use(morgan('combined', { stream: logger.stream }));
-
 
 app.use((req, res, next) => {
     const startTime = Date.now();
     logAPIRequest(req);
 
-    
     res.on('finish', () => {
         const duration = Date.now() - startTime;
         logger.info({
@@ -48,11 +41,9 @@ app.use((req, res, next) => {
     next();
 });
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 
 const uploadsDir = path.join(__dirname, "../uploads");
 const avatarsDir = path.join(uploadsDir, "avatars");
@@ -63,22 +54,17 @@ if (!fs.existsSync(avatarsDir)) {
     fs.mkdirSync(avatarsDir);
 }
 
-
 app.use("/uploads", express.static(uploadsDir));
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "../HealthyNepal/public/uploads")));
 
-// Config
 if (process.env.NODE_ENV !== "PRODUCTION") {
     require("dotenv").config({
         path: "backend/config/.env"
     });
 }
 
-// Handle favicon.ico requests early
 app.get('/favicon.ico', (req, res) => res.status(204).end());
-
-// Health check endpoint
 app.get("/api/v2/health", (req, res) => {
     res.status(200).json({
         success: true,
@@ -86,22 +72,20 @@ app.get("/api/v2/health", (req, res) => {
     });
 });
 
-// Import routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
 const admin = require("./controller/admin");
+const order = require("./controller/order");
 
-// Use routes
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/admin", admin);
+app.use("/api/v2/orders", order); 
 
-// Global error handler for authentication errors
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError' || err.message === 'No authentication token found') {
-        // For public routes that don't require authentication
         if (req.path.includes('/product/get-all-products') || 
             req.path.includes('/product/get-product/')) {
             return next();
@@ -114,7 +98,6 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// Handle 404 errors for API routes
 app.use('/api', (req, res, next) => {
     logger.warn({
         type: '404-error',
@@ -126,7 +109,6 @@ app.use('/api', (req, res, next) => {
     next(error);
 });
 
-// Handle 404 for other routes
 app.use((req, res, next) => {
     logger.warn({
         type: '404-error',
@@ -138,7 +120,6 @@ app.use((req, res, next) => {
     next(error);
 });
 
-// Error handling middleware for file cleanup
 app.use((err, req, res, next) => {
     if (req.files) {
         for (const file of req.files) {
@@ -155,7 +136,6 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// Log all errors
 app.use((err, req, res, next) => {
     logger.error({
         type: 'error',
@@ -170,7 +150,6 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// Final error handling middleware
 app.use(errorMiddleware);
 
 module.exports = app;

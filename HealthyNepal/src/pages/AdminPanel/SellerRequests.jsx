@@ -1,13 +1,10 @@
 import React from 'react';
-import '../../styles/admindashboard.css';
 
 const SellerRequests = () => {
   return (
-    <div className="admin-page">
+    <div>
       <h1>Seller Requests</h1>
-      <div className="page-content">
-        <p>List of seller requests will be displayed here.</p>
-      </div>
+      <p>This is the Seller Requests page.</p>
     </div>
   );
 };

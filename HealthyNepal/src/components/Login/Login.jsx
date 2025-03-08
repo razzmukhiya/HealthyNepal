@@ -51,6 +51,8 @@ const Login = () => {
 
       
       await dispatch(loadUser());
+      console.log("User data loaded:", user);
+
       
       toast.success("Login Success!");
       

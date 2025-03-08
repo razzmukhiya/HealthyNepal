@@ -6,7 +6,8 @@ import { loadSeller } from './redux/actions/sellers';
 import { refreshSellerToken } from './utils/refreshToken';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import Checkout from './pages/Checkout'; 
+import SellerRequests from './pages/AdminPanel/SellerRequests';
+import Checkout from './components/cart/Checkout'; 
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
@@ -32,6 +33,8 @@ import PlaceOrder from './pages/PlaceOrder';
 import AdminLogin from './pages/AdminPanel/AdminLogin';
 import AdminRegister from './pages/AdminPanel/AdminRegister';
 import AdminDashboard from './pages/AdminPanel/AdminDashboard';
+// import SellerRequests from './pages/AdminPanel/SellerRequests';
+import Withdrawlrequest from './pages/AdminPanel/WithdrawalRequests';
 
 function App() {
   const dispatch = useDispatch();
@@ -157,6 +160,23 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/register" element={<AdminRegister />} />
+            <Route path="/admin/seller-requests" element={
+              <ProtectedRoute type="admin">
+                <SellerRequests />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/orders" element={
+              <ProtectedRoute type="admin">
+                <Orders />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/withdrawals" element={
+              <ProtectedRoute type="admin">
+                <Withdrawlrequest />
+              </ProtectedRoute>
+            } />
 
             
             <Route path="/admin/dashboard" element={

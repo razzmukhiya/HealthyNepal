@@ -1,12 +1,12 @@
 import { setProducts, setLoading, setError, appendProducts, setHasMore, setCurrentPage } from '../reducers/productSlice';
 import api from '../../utils/api';
 
-// get all products (public route)
+
 export const getAllProducts = (page = 1, isFirstLoad = true) => async (dispatch) => {
   try {
     console.log('Fetching products - Page:', page, 'IsFirstLoad:', isFirstLoad);
     dispatch(setLoading(true));
-    dispatch(setError(null)); // Clear any previous errors
+    dispatch(setError(null)); 
     
     console.log('Making API request to:', `/product/get-all-products?page=${page}&limit=12`);
     const response = await api.get(`/product/get-all-products?page=${page}&limit=12`);
@@ -33,7 +33,7 @@ export const getAllProducts = (page = 1, isFirstLoad = true) => async (dispatch)
     
   } catch (error) {
     console.error('Error fetching products:', error);
-    dispatch(setProducts([])); // Clear products on error
+    dispatch(setProducts([]));
     dispatch(setError(
       error.response?.data?.message || 
       error.message || 
@@ -44,7 +44,7 @@ export const getAllProducts = (page = 1, isFirstLoad = true) => async (dispatch)
   }
 };
 
-// get single product (public route)
+
 export const getProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -67,7 +67,7 @@ export const getProduct = (id) => async (dispatch) => {
   }
 };
 
-// create product (auth required)
+
 export const createProduct = (formData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -82,7 +82,7 @@ export const createProduct = (formData) => async (dispatch) => {
       throw new Error(response.data?.message || "Failed to create product");
     }
 
-    // After successful creation, fetch updated products list for the shop
+    
     const shopId = response.data.product.shop;
     dispatch(getAllProductsShop(shopId));
   } catch (error) {
@@ -96,7 +96,7 @@ export const createProduct = (formData) => async (dispatch) => {
   }
 };
 
-// get All Products of a shop (auth required)
+
 export const getAllProductsShop = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -121,7 +121,7 @@ export const getAllProductsShop = (id) => async (dispatch) => {
   }
 };
 
-// delete product of a shop (auth required)
+
 export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -132,7 +132,7 @@ export const deleteProduct = (id) => async (dispatch) => {
       throw new Error(response.data?.message || "Failed to delete product");
     }
 
-    // After successful deletion, fetch updated products list for the shop
+    
     const shopId = response.data.product.shop;
     dispatch(getAllProductsShop(shopId));
   } catch (error) {

@@ -27,9 +27,11 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
             return next();
         }
 
-        const authHeader = req.headers.authorization;
+        const authHeader = req.headers.authorization; // Check for authorization header
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) { // Validate token format
+
             return res.status(401).json({
                 success: false,
                 message: "Please login to continue"
@@ -45,33 +47,36 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY); // Decode the token
+
         
         // Check user role
         const user = await User.findById(decoded.id);
-        if (!user) {
+        if (!user) { // Check if user exists
+
             return res.status(401).json({
                 success: false,
                 message: "User not found"
             });
         }
 
-        // Check if this is a seller
+    
         const seller = await Shop.findById(decoded.id);
         if (seller) {
             req.user = { id: decoded.id, role: 'seller' };
         } else {
-            // Set user with their actual role (user/admin)
+            
             req.user = { id: decoded.id, role: user.role };
         }
         next();
     } catch (error) {
-        // Skip authentication errors for public routes
+       
         if (isPublicRoute(req.path)) {
             return next();
         }
 
-        if (error.name === 'TokenExpiredError') {
+        if (error.name === 'TokenExpiredError') { // Handle token expiration
+
             return res.status(401).json({
                 success: false,
                 message: "Token expired, please login again"

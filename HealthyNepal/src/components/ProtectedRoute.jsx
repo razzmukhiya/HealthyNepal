@@ -20,7 +20,8 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
     const { isAuthenticated: isUserAuthenticated, user, loading } = useSelector((state) => state.auth);
     
     // Check for token in localStorage
-    const token = type === 'seller' 
+        const token = type === 'seller' // Check for seller token
+
         ? localStorage.getItem('sellerAccessToken')
         : type === 'admin'
         ? localStorage.getItem('adminToken')
@@ -64,7 +65,8 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
         }
 
         // Only redirect after initial load and if there's no authentication
-        if (!isInitialLoad && (!token || !isSellerAuthenticated || !seller)) {
+        if (!isInitialLoad && (!token || !isSellerAuthenticated || !seller)) { // Check seller authentication
+
             return <Navigate 
                 to="/seller-login" 
                 state={{ from: location.pathname }}
@@ -72,8 +74,10 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
             />;
         }
     }
-    // Handle admin routes
+    
     else if (type === 'admin') {
+        console.log('Admin Route Check:', { token, isUserAuthenticated, user, role: user?.role }); // Log statement here
+
         // Show loading state while checking authentication
         if (loading) {
             return (
@@ -84,7 +88,8 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
         }
 
         // If there's no token, user is not authenticated, no user data, or user is not admin
-        if (!token || !isUserAuthenticated || !user || user.role !== 'admin') {
+        if (!token || !isUserAuthenticated || !user || user.role !== 'admin') { // Check admin authentication
+
             return <Navigate 
                 to="/admin/login" 
                 state={{ from: location.pathname }}
@@ -95,7 +100,8 @@ const ProtectedRoute = ({ children, type = 'user' }) => {
     // Handle user routes
     else {
         // If there's no token, user is not authenticated, or no user data, redirect to login
-        if (!token || !isUserAuthenticated || !user) {
+        if (!token || !isUserAuthenticated || !user) { // Check user authentication
+
             return <Navigate 
                 to="/login" 
                 state={{ from: location.pathname }}

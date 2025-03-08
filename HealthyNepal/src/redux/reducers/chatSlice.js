@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Async thunks
+
 export const fetchChats = createAsyncThunk(
   'chat/fetchChats',
   async (_, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -55,7 +55,7 @@ export const sendMessage = createAsyncThunk(
   'chat/sendMessage',
   async ({ sellerId, message }, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -77,7 +77,7 @@ export const markAsRead = createAsyncThunk(
   'chat/markAsRead',
   async (sellerId, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       await new Promise((resolve) => {
         setTimeout(resolve, 500);
       });
@@ -113,7 +113,7 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch chats cases
+      
       .addCase(fetchChats.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -127,7 +127,7 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Send message cases
+      
       .addCase(sendMessage.pending, (state) => {
         state.error = null;
       })
@@ -138,7 +138,7 @@ const chatSlice = createSlice({
         }
         state.chats[sellerId].push(message);
         
-        // Update last message in sellers list
+        
         const sellerIndex = state.sellers.findIndex(s => s.id === sellerId);
         if (sellerIndex !== -1) {
           state.sellers[sellerIndex].lastMessage = message.text;
@@ -148,7 +148,7 @@ const chatSlice = createSlice({
       .addCase(sendMessage.rejected, (state, action) => {
         state.error = action.payload;
       })
-      // Mark as read cases
+      
       .addCase(markAsRead.fulfilled, (state, action) => {
         const sellerIndex = state.sellers.findIndex(s => s.id === action.payload);
         if (sellerIndex !== -1) {
@@ -161,7 +161,7 @@ const chatSlice = createSlice({
 export const { setSelectedSeller, setSearch, clearError } = chatSlice.actions;
 export default chatSlice.reducer;
 
-// Selectors
+
 export const selectSellers = (state) => {
   const search = state.chat.search.toLowerCase();
   return state.chat.sellers.filter(seller => 

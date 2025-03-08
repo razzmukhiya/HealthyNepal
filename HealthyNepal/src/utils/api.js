@@ -3,7 +3,9 @@ import { store } from '../redux/store';
 import { logout } from '../redux/reducers/authSlice';
 
 // Export the server URL
-export const server = "http://localhost:8000/api/v2";
+export const server = "http://localhost:8000/api/v2"; // Correct API URL for backend
+
+
 
 // List of public routes that don't require authentication
 const publicRoutes = [
@@ -109,7 +111,7 @@ api.interceptors.response.use(
           throw new Error('Failed to refresh token');
         }
 
-        // Store the new token in the appropriate storage
+        
         if (isSellerRoute) {
           localStorage.setItem('sellerAccessToken', accessToken);
         } else {
@@ -119,7 +121,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // If refresh token is invalid or expired, logout the appropriate user type
+        
         if (originalRequest.url.includes('/shop/')) {
           store.dispatch({ type: 'SellerLogout' });
         } else {

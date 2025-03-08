@@ -6,10 +6,12 @@ import withdrawalsReducer from './reducers/withdrawalsSlice';
 import requestsReducer from './reducers/requestsSlice';
 import chatReducer from './reducers/chatSlice';
 import productReducer from './reducers/productSlice';
-import cartReducer from './reducers/cartSlice';
 import wishlistReducer from './reducers/wishlistSlice';
+import cartReducer from './reducers/cartSlice';
 
-// Custom middleware for logging actions and errors
+
+
+
 const logger = (store) => (next) => (action) => {
   // Log all product-related actions
   if (action.type?.startsWith('product/')) {
@@ -41,7 +43,7 @@ const logger = (store) => (next) => (action) => {
   }
 };
 
-// Custom middleware for handling async actions
+
 const asyncErrorHandler = () => (next) => (action) => {
   if (typeof action === 'function') {
     return action(next).catch((error) => {
@@ -64,9 +66,10 @@ export const store = configureStore({
     requests: requestsReducer,
     chat: chatReducer,
     product: productReducer,
-    cart: cartReducer,
     wishlist: wishlistReducer,
+    cart: cartReducer, // Adding the cart reducer
   },
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
@@ -74,16 +77,6 @@ export const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-// Subscribe to store changes for debugging
-store.subscribe(() => {
-  const state = store.getState();
-  if (state.sellers) {
-    console.log('Sellers State:', {
-      isAuthenticated: state.sellers.isAuthenticated,
-      seller: state.sellers.seller ? 'Present' : 'Not Present',
-      error: state.sellers.error
-    });
-  }
-});
+
 
 export default store;

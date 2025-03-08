@@ -9,7 +9,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configure multer for file upload
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -19,10 +19,10 @@ const storage = multer.diskStorage({
   }
 });
 
-// Configure multer for document upload
+
 const documentUpload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: function (req, file, cb) {
     const filetypes = /jpeg|jpg|png|pdf/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -34,7 +34,7 @@ const documentUpload = multer({
   }
 });
 
-// Configure multer for avatar upload
+
 const avatarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, '../../uploads/avatars');
@@ -50,7 +50,7 @@ const avatarStorage = multer.diskStorage({
 
 const avatarUpload = multer({
   storage: avatarStorage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+  limits: { fileSize: 2 * 1024 * 1024 }, 
   fileFilter: function (req, file, cb) {
     const filetypes = /jpeg|jpg|png/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -87,7 +87,7 @@ router.post(
         );
       }
 
-      // Generate access and refresh tokens
+      
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET_KEY,
@@ -150,7 +150,7 @@ router.post(
         }
       });
 
-      // Generate access and refresh tokens
+      
       const accessToken = jwt.sign(
         { id: newShop._id },
         process.env.JWT_SECRET_KEY,
@@ -286,7 +286,7 @@ router.put(
         return next(new ErrorHandler("Seller not found", 404));
       }
 
-      // Check if email is being changed and if it's already in use
+      
       if (email !== seller.email) {
         const existingShop = await Shop.findOne({ email });
         if (existingShop) {

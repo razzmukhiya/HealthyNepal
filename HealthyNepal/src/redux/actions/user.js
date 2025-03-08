@@ -26,12 +26,12 @@ export const loadUser = () => async (dispatch) => {
     
     dispatch(loadUserSuccess(user));
   } catch (error) {
-    // Only dispatch error for actual API failures
+    
     if (error.response && error.response.status !== 401) {
       const errorMessage = error.response?.data?.message || "Network Error";
       dispatch(loadUserFail(errorMessage));
     } else {
-      // For 401 unauthorized or no token, silently reset the state
+      
       dispatch(loadUserSuccess(null));
     }
   }

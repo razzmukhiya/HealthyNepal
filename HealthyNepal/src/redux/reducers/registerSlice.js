@@ -5,10 +5,10 @@ export const registerAdmin = createAsyncThunk(
   'register/registerAdmin',
   async (formData, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       const response = await new Promise((resolve, reject) => {
         setTimeout(() => {
-          // Simulate validation
+          
           if (formData.email === 'existing@example.com') {
             reject(new Error('Email already exists'));
           }

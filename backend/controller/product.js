@@ -14,7 +14,7 @@ const fs = require("fs");
 // Configure multer for product images
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Save to both backend and frontend uploads directories
+    
     const backendUploadDir = path.join(__dirname, '../../uploads');
     const frontendUploadDir = path.join(__dirname, '../../HealthyNepal/public/uploads');
     
@@ -24,14 +24,14 @@ const storage = multer.diskStorage({
       }
     });
     
-    // Save to backend uploads directory
+    
     cb(null, backendUploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const filename = 'images-' + uniqueSuffix + path.extname(file.originalname);
     
-    // Also copy to frontend uploads directory
+    
     const frontendPath = path.join(__dirname, '../../HealthyNepal/public/uploads', filename);
     file.frontendPath = frontendPath;
     
@@ -55,11 +55,11 @@ const upload = multer({
   }
 });
 
-// Cache for products
-const productCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Helper function to get cached data
+const productCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000;
+
+
 const getCachedData = (key) => {
   const cachedItem = productCache.get(key);
   if (cachedItem && Date.now() - cachedItem.timestamp < CACHE_DURATION) {
@@ -68,7 +68,7 @@ const getCachedData = (key) => {
   return null;
 };
 
-// Helper function to set cache data
+
 const setCacheData = (key, data) => {
   productCache.set(key, {
     data,
@@ -76,17 +76,19 @@ const setCacheData = (key, data) => {
   });
 };
 
-// Public routes - no auth required
+
 router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
     try {
+      const searchTerm = req.query.search || ""; // Get search term from query
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 12;
       const skip = (page - 1) * limit;
 
-      // Simplified query without caching and unnecessary operations
-      const products = await Product.find()
+      const products = await Product.find({
+        name: { $regex: searchTerm, $options: "i" } // Filter by name using regex
+      })
         .select('name description category originalPrice discountPrice stock images ratings')
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -110,6 +112,7 @@ router.get(
     }
   })
 );
+
 
 router.get(
   "/get-product/:id",
@@ -264,7 +267,7 @@ router.delete(
         return next(new ErrorHandler("Product not found", 404));
       }
 
-      // Delete product images from uploads directory
+      
       if (product.images && product.images.length > 0) {
         product.images.forEach(image => {
           const imagePath = path.join(__dirname, '../../uploads', image.public_id);

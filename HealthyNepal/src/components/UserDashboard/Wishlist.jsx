@@ -1,11 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { removeFromWishlist } from '../../redux/reducers/wishlistSlice';
+import { getImageUrl, handleImageError } from '../../utils/imageUtils';
+import { toast } from 'react-toastify';
 import "../../styles/WishlistStyles.css";
 
 const Wishlist = () => {
-  // This would typically come from Redux state
-  const [wishlistItems] = React.useState([]);
+  const dispatch = useDispatch();
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const wishlistItems = wishlist || [];
 
   return (
     <div className="wishlist-container">
@@ -26,16 +30,47 @@ const Wishlist = () => {
             {wishlistItems.map((item) => (
               <div key={item._id} className="wishlist-item">
                 <div className="item-image">
-                  <img src={item.images[0]} alt={item.name} />
+                  <img
+                    src={getImageUrl(item.images)}
+                    alt={item.name}
+                    onError={(e) => {
+                      console.log('Image load error:', e.target.src);
+                      e.target.onerror = null;
+                      handleImageError(e);
+                    }}
+                  />
                 </div>
                 <div className="item-details">
                   <h3>{item.name}</h3>
-                  <p className="item-price">Rs. {item.price}</p>
+                  <div className="product-price">
+                    <h5 className='product-discount-price'>
+                      Rs. {item.discountPrice || item.price || 0}
+                    </h5>
+                    {item.price > item.discountPrice && (
+                      <h4 className='price'>
+                        Rs. {item.price}
+                      </h4>
+                    )}
+                  </div>
                   <div className="item-actions">
-                    <button className="add-to-cart-btn">
+                    <button 
+                      className="add-to-cart-btn"
+                      onClick={() => {
+                        dispatch(addToCart({
+                          ...item,
+                          qty: 1,
+                          price: item.discountPrice || item.price || 0
+                        }));
+                        dispatch(removeFromWishlist(item));
+                        toast.success('Item moved to cart!');
+                      }}
+                    >
                       Add to Cart
                     </button>
-                    <button className="remove-btn">
+                    <button 
+                      className="remove-btn"
+                      onClick={() => dispatch(removeFromWishlist(item))}
+                    >
                       Remove
                     </button>
                   </div>

@@ -36,18 +36,18 @@ export const login = (email, password) => async (dispatch) => {
             throw new Error('Missing authentication tokens');
         }
         
-        // Store tokens in localStorage
+        
         localStorage.setItem("sellerAccessToken", data.accessToken);
-        localStorage.removeItem("userAccessToken"); // Ensure user is logged out
+        localStorage.removeItem("userAccessToken");
         localStorage.setItem("sellerRefreshToken", data.refreshToken);
 
-        // Get the seller data from the response
+        
         const sellerData = data.seller || data.user;
         if (!sellerData) {
             throw new Error('Missing seller data');
         }
         
-        // Dispatch login success with the seller data
+       
         dispatch(LoadSellerSuccess(sellerData));
         return { ...data, success: true };
     } catch (error) {
@@ -64,7 +64,7 @@ export const loadSeller = () => async (dispatch) => {
         let token = localStorage.getItem("sellerAccessToken");
         const refreshToken = localStorage.getItem("sellerRefreshToken");
         
-        // If no tokens at all, clear state and return
+        
         if (!token && !refreshToken) {
             dispatch(SellerLogout());
             return;
@@ -72,7 +72,7 @@ export const loadSeller = () => async (dispatch) => {
 
         dispatch(LoadSellerRequest());
 
-        // If no access token but have refresh token, try to refresh first
+        
         if (!token && refreshToken) {
             try {
                 token = await refreshSellerToken();
@@ -101,13 +101,13 @@ export const loadSeller = () => async (dispatch) => {
             dispatch(LoadSellerSuccess(data.seller));
             return data;
         } catch (error) {
-            // If token expired (401), try to refresh it
+            
             if (error.response?.status === 401 && refreshToken) {
                 try {
-                    // Get new access token
+                    
                     token = await refreshSellerToken();
                     
-                    // Retry the request with new token
+                    
                     const { data } = await axios.get(`${server}/shop/getSeller`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -124,7 +124,7 @@ export const loadSeller = () => async (dispatch) => {
                     dispatch(LoadSellerSuccess(data.seller));
                     return data;
                 } catch (refreshError) {
-                    // If refresh fails, logout
+                    
                     localStorage.removeItem("sellerAccessToken");
                     localStorage.removeItem("sellerRefreshToken");
                     dispatch(SellerLogout());
@@ -143,7 +143,7 @@ export const loadSeller = () => async (dispatch) => {
     }
 };
 
-// Update seller info
+
 export const updateSellerInfo = (formData) => async (dispatch) => {
     try {
         let token = localStorage.getItem("sellerAccessToken");
@@ -173,13 +173,13 @@ export const updateSellerInfo = (formData) => async (dispatch) => {
             dispatch(UpdateSellerInfoSuccess(data.seller));
             return data;
         } catch (error) {
-            // If token expired (401), try to refresh it
+            
             if (error.response?.status === 401) {
                 try {
-                    // Get new access token
+                    
                     token = await refreshSellerToken();
                     
-                    // Retry the request with new token
+                    
                     const { data } = await axios.put(
                         `${server}/shop/update-seller`,
                         formData,
@@ -199,7 +199,7 @@ export const updateSellerInfo = (formData) => async (dispatch) => {
                     dispatch(UpdateSellerInfoSuccess(data.seller));
                     return data;
                 } catch (refreshError) {
-                    // If refresh fails, logout
+                    
                     localStorage.removeItem("sellerAccessToken");
                     localStorage.removeItem("sellerRefreshToken");
                     dispatch(SellerLogout());
@@ -219,11 +219,11 @@ export const updateSellerInfo = (formData) => async (dispatch) => {
 // Logout seller
 export const logout = () => (dispatch) => {
     try {
-        // Remove tokens from localStorage
+        
         localStorage.removeItem("sellerAccessToken");
         localStorage.removeItem("sellerRefreshToken");
         
-        // Clear seller state
+        
         dispatch(SellerLogout());
     } catch (error) {
         console.error('Logout error:', error);

@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Async thunks
+
 export const fetchRequests = createAsyncThunk(
   'requests/fetchRequests',
   async ({ status = 'pending', page = 1, search = '', sort = '' }, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -50,7 +50,7 @@ export const updateRequestStatus = createAsyncThunk(
   'requests/updateStatus',
   async ({ requestId, status, feedback = '' }, { rejectWithValue }) => {
     try {
-      // Replace with actual API call
+      
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -71,7 +71,7 @@ export const viewDocument = createAsyncThunk(
   'requests/viewDocument',
   async ({ requestId, documentName }, { rejectWithValue }) => {
     try {
-      // Replace with actual API call to fetch document
+      
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({

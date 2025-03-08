@@ -3,7 +3,7 @@ import { server } from '../../../server';
 import { loginAdmin, clearError, loadUserRequest, loadUserSuccess, loadUserFail } from '../reducers/authSlice';
 import { toast } from 'react-toastify';
 
-// Admin login action
+
 export const adminLogin = (formData) => async (dispatch) => {
   try {
     dispatch(loadUserRequest());
@@ -14,6 +14,7 @@ export const adminLogin = (formData) => async (dispatch) => {
       { withCredentials: true }
     );
 
+    console.log('Admin Login Response:', data);
     localStorage.setItem('adminToken', data.token);
     dispatch(loginAdmin(data.user));
     dispatch(loadUserSuccess(data.user));

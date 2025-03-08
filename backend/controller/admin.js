@@ -89,7 +89,7 @@ router.get(
 const multer = require("multer");
 const path = require("path");
 
-// Configure multer for file upload
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/avatars/");
@@ -132,7 +132,7 @@ router.post(
         return next(new ErrorHandler("Email already registered", 400));
       }
 
-      // Create new admin user with avatar
+    
       const user = await User.create({
         name,
         email,
@@ -180,6 +180,34 @@ router.get(
       res.status(200).json({
         success: true,
         message: "Admin logged out successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+// Get dashboard data
+router.get(
+  "/dashboard",
+  isAuthenticated,
+  isAdmin,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const totalUsers = await User.countDocuments();
+      const totalSellers = await Shop.countDocuments();
+      const totalProducts = await Product.countDocuments();
+      const totalRevenue = await Order.aggregate([
+        { $group: { _id: null, total: { $sum: "$totalPrice" } } }
+      ]);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          totalUsers,
+          totalSellers,
+          totalProducts,
+          totalRevenue: totalRevenue[0] ? totalRevenue[0].total : 0,
+        },
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

@@ -18,10 +18,10 @@ const Signup = () => {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Store the actual file
+      
       setAvatar(file);
       
-      // Preview the image
+      
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.readyState === 2) {
@@ -49,7 +49,7 @@ const Signup = () => {
     axios
       .post(`${server}/user/create-user`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Set content type for FormData
+          'Content-Type': 'multipart/form-data',
         },
       })
       .then((res) => {
@@ -58,7 +58,7 @@ const Signup = () => {
         setEmail("");
         setPassword("");
         setAvatar(null);
-        navigate("/"); // Navigate to the home page after successful signup
+        navigate("/"); 
       })
       .catch((error) => {
         toast.error(error.response.data.message);

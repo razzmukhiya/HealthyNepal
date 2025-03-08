@@ -6,9 +6,9 @@ import { loadSeller, logout as sellerLogout } from "../redux/actions/sellers";
 import PropTypes from 'prop-types';
 import "../styles/Navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
-import { productData } from "../../src/statics/data";
 import { server } from "../utils/api";
 import { RxAvatar } from "react-icons/rx";
+import axios from 'axios';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,20 +19,29 @@ const Navbar = () => {
   
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  console.log("Current user state:", user);
+
   const { isAuthenticated: isSeller, seller } = useSelector((state) => state.sellers);
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const handleUserLogout = () => {
+    const handleUserLogout = () => { 
+  
+
+
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     dispatch(LOGOUT());
-    navigate("/login");
+    
   };
 
-  const handleSellerLogout = () => {
+    const handleSellerLogout = () => { 
+        dispatch(sellerLogout());
+        
+
+
     dispatch(sellerLogout());
     navigate('/seller-login');
   };
@@ -50,27 +59,32 @@ const Navbar = () => {
     };
   }, []);
 
-    useEffect(() => {
-        const sellerToken = localStorage.getItem("sellerAccessToken");
-        const userToken = localStorage.getItem("accessToken");
-        
-        if (sellerToken) {
-            dispatch(loadSeller());
-        } else if (userToken && isAuthenticated && userToken !== null) {
-            dispatch(loadUser());
-        }
+  useEffect(() => {
+    const sellerToken = localStorage.getItem("sellerAccessToken");
+    const userToken = localStorage.getItem("accessToken");
+    
+    if (sellerToken) {
+        dispatch(loadSeller());
+    } else if (userToken && isAuthenticated && userToken !== null) {
+        dispatch(loadUser());
+    }
   }, [dispatch]);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-
-    const filterProducts = productData.filter((product) => 
-      product.name.toLowerCase().includes(term.toLowerCase())
-    );
-    setSearchData(filterProducts);
+  
+    if (term) {
+      try {
+        const response = await axios.get(`/api/v2/product/get-all-products?search=${term}`); 
+        setSearchData(response.data.products); 
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    } else {
+      setSearchData([]); 
+    }
   };
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 70) {
@@ -101,7 +115,12 @@ const Navbar = () => {
 
         {!isAuthenticated && !isSeller ? (
           <>
-            <NavLink to="/login" className="Navlink" onClick={() => setDropdownVisible(false)}>
+        <NavLink to="/login" className="Navlink" onClick={() => {
+            setDropdownVisible(false);
+            localStorage.removeItem("accessToken"); 
+            localStorage.removeItem("refreshToken"); 
+        }}>
+
               <p>Login</p>
               <hr />
             </NavLink>
@@ -172,6 +191,15 @@ const Navbar = () => {
             value={searchTerm}
             onChange={handleSearchChange}
           />
+          {searchData.length > 0 && (
+            <div className="search-results">
+              {searchData.map((product, index) => (
+                <NavLink key={index} to={`/product/${product.id}`} className="search-item">
+                  {product.name}
+                </NavLink>
+              ))}
+            </div>
+          )}
         </div>
 
         <NavLink to="/prescription-medicine">

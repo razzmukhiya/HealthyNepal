@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter your product name!"],
     trim: true,
-    index: true // Add index for faster search by name
+    index: true 
   },
   description: {
     type: String,
@@ -14,11 +14,11 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, "Please enter your product category!"],
-    index: true // Add index for faster category filtering
+    index: true
   },
   tags: [{
     type: String,
-    index: true // Add index for faster tag-based searches
+    index: true 
   }],
   originalPrice: {
     type: Number,
@@ -71,13 +71,13 @@ const productSchema = new mongoose.Schema({
   shopId: {
     type: String,
     required: true,
-    index: true // Add index for faster shop-based queries
+    index: true 
   },
   shop: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shop",
     required: true,
-    index: true // Add index for faster shop population
+    index: true 
   },
   sold_out: {
     type: Boolean,
@@ -86,7 +86,7 @@ const productSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
-    index: true // Add index for sorting by creation date
+    index: true 
   },
 }, { 
   timestamps: true,
@@ -94,12 +94,12 @@ const productSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Compound index for common query patterns
+
 productSchema.index({ category: 1, createdAt: -1 });
 productSchema.index({ shopId: 1, createdAt: -1 });
-productSchema.index({ name: 'text', description: 'text', tags: 'text' }); // Text search index
+productSchema.index({ name: 'text', description: 'text', tags: 'text' });
 
-// Virtual for calculating discount percentage
+
 productSchema.virtual('discountPercentage').get(function() {
   if (this.originalPrice && this.discountPrice) {
     return Math.round(((this.originalPrice - this.discountPrice) / this.originalPrice) * 100);
@@ -107,13 +107,13 @@ productSchema.virtual('discountPercentage').get(function() {
   return 0;
 });
 
-// Pre-save middleware to update sold_out status
+
 productSchema.pre('save', function(next) {
   this.sold_out = this.stock <= 0;
   next();
 });
 
-// Method to update ratings
+
 productSchema.methods.updateRatings = function() {
   if (this.reviews && this.reviews.length > 0) {
     const totalRating = this.reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
@@ -123,7 +123,7 @@ productSchema.methods.updateRatings = function() {
   }
 };
 
-// Static method to get products by category with caching support
+
 productSchema.statics.findByCategory = async function(category, limit = 10) {
   return this.find({ category })
     .select('name description originalPrice discountPrice stock images ratings')
@@ -132,7 +132,7 @@ productSchema.statics.findByCategory = async function(category, limit = 10) {
     .lean();
 };
 
-// Static method to get trending products
+
 productSchema.statics.getTrendingProducts = async function(limit = 10) {
   return this.find({ ratings: { $gt: 4 }, stock: { $gt: 0 } })
     .select('name originalPrice discountPrice images ratings')
@@ -141,7 +141,7 @@ productSchema.statics.getTrendingProducts = async function(limit = 10) {
     .lean();
 };
 
-// Ensure all indexes are created
+
 const Product = mongoose.model("Product", productSchema);
 Product.syncIndexes().then(() => {
   console.log('Product indexes synchronized');
